@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -32,6 +33,16 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+private val CustomLightColorScheme = lightColorScheme(
+    primary = BlueLight, // Botones
+    onPrimary = Color.White,
+    secondary = Green,
+    onSecondary = Color.White,
+    background = LightGray, // Fondo general
+    onBackground = Gray, // Texto sobre fondo general
+    surface = LightBlue, // TextField
+    onSurface = Gray // Texto sobre TextField
+)
 
 @Composable
 fun PTDAppTheme(
@@ -47,7 +58,7 @@ fun PTDAppTheme(
         }
 
         darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> CustomLightColorScheme
     }
 
     MaterialTheme(
