@@ -35,7 +35,6 @@ fun CustomTextField(
             text = label,
             style = TextStyle(
                 fontSize = 26.sp,
-//                fontWeight = FontWeight.Bold,
                 fontFamily = Dongle,
                 color = Color.Black
             ),

@@ -31,6 +31,10 @@ val Dongle = FontFamily(
     Font(R.font.dongle_regular, FontWeight.Normal),
 //    Font(R.font.dongle_bold, FontWeight.Bold)
 )
+//Tipografia OpenSauce condensed
+val OpenSauce = FontFamily(
+    Font(R.font.opensauce_regular, FontWeight.Normal)
+)
 
 
 // Set of Material typography styles to start with
