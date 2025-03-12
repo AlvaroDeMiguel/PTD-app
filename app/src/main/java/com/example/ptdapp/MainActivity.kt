@@ -10,10 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.ptdapp.ui.components.CustomAlertDialog
 import com.example.ptdapp.ui.components.CustomCardGasto
 import com.example.ptdapp.ui.components.CustomCardInicio
 import com.example.ptdapp.ui.components.CustomCardSaldo
@@ -25,7 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PTDAppTheme{
+            PTDAppTheme {
                 CenteredTextFields()
             }
         }
@@ -36,16 +41,30 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CenteredTextFields() {
     Column(
-        modifier = Modifier.fillMaxSize().padding(10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
-    ) {
+        ) {
         CustomCardInicio(text = "Card")
         Spacer(modifier = Modifier.height(16.dp))
+
         CustomCardGasto(fecha = "2 Ene. 2025", nombreGasto = "Gasto 1", precioGasto = "0,00")
         Spacer(modifier = Modifier.height(16.dp))
-        CustomCardSaldo(nombreGasto = "Gasto 1", precioGasto = "0,00")
+
+        CustomCardSaldo(nombrePersona = "Gasto 1", gastoPersona = "0,00")
+        Spacer(modifier = Modifier.height(16.dp))
+
+        var showDialog by remember { mutableStateOf(true) }
+        if (showDialog) {
+            CustomAlertDialog(
+                message = "Si saldas las deudas de este grupo ya no se podrán editar posteriormente y el Grupo 1 se archivara.",
+                onDismiss = { showDialog = false },
+                onConfirm = { showDialog = false }
+            )
+        }
     }
 }
 
