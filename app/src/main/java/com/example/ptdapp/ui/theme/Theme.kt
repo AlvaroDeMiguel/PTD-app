@@ -11,12 +11,20 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.ptdapp.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
+
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
@@ -33,16 +41,8 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
-private val CustomLightColorScheme = lightColorScheme(
-    primary = BlueLight, // Botones
-    onPrimary = Color.White,
-    secondary = Green,
-    onSecondary = Color.White,
-    background = LightGray, // Fondo general
-    onBackground = Gray, // Texto sobre fondo general
-    surface = LightBlue, // TextField
-    onSurface = Gray // Texto sobre TextField
-)
+
+
 
 @Composable
 fun PTDAppTheme(
@@ -58,7 +58,7 @@ fun PTDAppTheme(
         }
 
         darkTheme -> DarkColorScheme
-        else -> CustomLightColorScheme
+        else -> LightColorScheme
     }
 
     MaterialTheme(
