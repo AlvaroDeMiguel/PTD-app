@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.ptdapp.ui.components.CustomCardInicio
 import com.example.ptdapp.ui.components.CustomTextField
 import com.example.ptdapp.ui.components.CustomTextFieldPassword
 import com.example.ptdapp.ui.theme.PTDAppTheme
@@ -51,6 +52,8 @@ fun CenteredTextFields() {
         CustomTextField(label = "Correo electrónico", placeholder = "ejemplo@gmail.com")
         Spacer(modifier = Modifier.height(16.dp))
         CustomTextFieldPassword(label = "Contraseña",placeholder = "Introduce contraseña")
+        Spacer(modifier = Modifier.height(16.dp))
+        CustomCardInicio(text = "Card")
     }
 }
 

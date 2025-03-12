@@ -13,17 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ptdapp.ui.theme.*
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.ptdapp.R
-import com.example.ptdapp.ui.theme.*
 
 val TextFieldColor = Color(0xFFA7D8F5) // Azul claro cuando no está enfocado
 val TextFieldFocusedColor = Color(0xFF89C2E2) // Azul más oscuro cuando está enfocado
