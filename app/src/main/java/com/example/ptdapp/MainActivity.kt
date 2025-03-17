@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.ptdapp.ui.components.CustomAlertDialog
 import com.example.ptdapp.ui.components.CustomCardGasto
 import com.example.ptdapp.ui.components.CustomCardInicio
@@ -25,15 +26,19 @@ import com.example.ptdapp.ui.components.CustomCardSaldo
 import com.example.ptdapp.ui.components.CustomTextField
 import com.example.ptdapp.ui.components.CustomTextFieldPassword
 import com.example.ptdapp.ui.components.LoginButtonComponent
-import com.example.ptdapp.ui.screens.loginScreen.LoginScreen
+import com.example.ptdapp.ui.navigation.NavGraph
 import com.example.ptdapp.ui.theme.PTDAppTheme
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val navController = rememberNavController() // Crear NavController
+            val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null // Verifica sesión
+            val isUserLoggedInFake = false
             PTDAppTheme {
-                LoginScreen()
+                NavGraph(navController, isUserLoggedInFake)
             }
         }
     }

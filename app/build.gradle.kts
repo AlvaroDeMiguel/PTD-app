@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.googleService)
+//    id("dagger.hilt.android.plugin")
+//    id("com.google.devtools.ksp")
 }
 
 android {
@@ -41,7 +43,7 @@ android {
 }
 
 dependencies {
-
+    // default
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -57,6 +59,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Compose Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Dagger Hilt
+//    implementation("com.google.dagger:hilt-android:2.51")
+//    ksp("com.google.dagger:hilt-android-compiler:2.51")
 
     // FIREBASE //
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))

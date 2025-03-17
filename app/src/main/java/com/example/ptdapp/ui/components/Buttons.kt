@@ -22,7 +22,7 @@ fun LoginButtonComponent(onLoginClick: () -> Unit) {
         colors = ButtonDefaults.buttonColors(containerColor = BlueLight),
         shape = RoundedCornerShape(10.dp), // Bordes redondeados
         modifier = Modifier
-            .fillMaxWidth() // 80% del ancho de la pantalla
+            .fillMaxWidth()
             .height(50.dp) // Altura del botón
     ) {
         Text(
@@ -37,15 +37,15 @@ fun LoginButtonComponent(onLoginClick: () -> Unit) {
 }
 
 @Composable
-fun RegisterButtonComponent(onLoginClick: () -> Unit) {
+fun RegisterButtonComponent(onRegisterClick: () -> Unit) {
     Button(
         onClick = {
-            onLoginClick()
+            onRegisterClick()
         },
         colors = ButtonDefaults.buttonColors(containerColor = BlueLight),
         shape = RoundedCornerShape(10.dp), // Bordes redondeados
         modifier = Modifier
-            .fillMaxWidth(0.8f) // 80% del ancho de la pantalla
+            .fillMaxWidth()
             .height(50.dp) // Altura del botón
     ) {
         Text(
