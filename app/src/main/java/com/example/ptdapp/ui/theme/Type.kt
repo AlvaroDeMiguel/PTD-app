@@ -11,7 +11,7 @@ import com.example.ptdapp.R
 //Tipografia OpenSans normal
 val OpenSansNormal = FontFamily(
     Font(R.font.opensans_regular, FontWeight.Normal),
-//    Font(R.font.opensans_bold, FontWeight.Bold)
+    Font(R.font.opensans_bold, FontWeight.Bold)
 )
 
 //Tipografia OpenSans semicondensed

@@ -11,6 +11,7 @@ object Destinations {
     const val NOTIFICATION_SCREEN = "notifications"
     const val PROFILE_SCREEN = "profile"
     const val WALLET_SCREEN = "wallet"
+    const val MAIN_SCREEN = "main_screen"
 
     fun detailGastoRoute(gastoId: String) = "detail_gasto/$gastoId"
     fun detailPTDRoute(ptdId: String) = "detail_ptd/$ptdId"
