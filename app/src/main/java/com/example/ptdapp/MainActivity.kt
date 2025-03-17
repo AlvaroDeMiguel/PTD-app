@@ -24,6 +24,8 @@ import com.example.ptdapp.ui.components.CustomCardInicio
 import com.example.ptdapp.ui.components.CustomCardSaldo
 import com.example.ptdapp.ui.components.CustomTextField
 import com.example.ptdapp.ui.components.CustomTextFieldPassword
+import com.example.ptdapp.ui.components.LoginButtonComponent
+import com.example.ptdapp.ui.screens.loginScreen.LoginScreen
 import com.example.ptdapp.ui.theme.PTDAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +33,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PTDAppTheme {
-                CenteredTextFields()
+                LoginScreen()
             }
         }
     }
@@ -48,23 +50,11 @@ fun CenteredTextFields() {
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-        CustomCardInicio(text = "Card")
-        Spacer(modifier = Modifier.height(16.dp))
-
-        CustomCardGasto(fecha = "2 Ene. 2025", nombreGasto = "Gasto 1", precioGasto = "0,00")
-        Spacer(modifier = Modifier.height(16.dp))
-
-        CustomCardSaldo(nombrePersona = "Gasto 1", gastoPersona = "0,00")
-        Spacer(modifier = Modifier.height(16.dp))
-
-        var showDialog by remember { mutableStateOf(true) }
-        if (showDialog) {
-            CustomAlertDialog(
-                message = "Si saldas las deudas de este grupo ya no se podrán editar posteriormente y el Grupo 1 se archivara.",
-                onDismiss = { showDialog = false },
-                onConfirm = { showDialog = false }
-            )
-        }
+        CustomTextFieldPassword(label = "Contraseña", placeholder = "Contraseña")
+        Spacer(modifier = Modifier.height(24.dp))
+        LoginButtonComponent(
+            onLoginClick = { TODO() }
+        )
     }
 }
 

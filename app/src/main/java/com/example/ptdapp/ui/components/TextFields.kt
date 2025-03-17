@@ -18,9 +18,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.ptdapp.R
 
-val TextFieldColor = Color(0xFFA7D8F5) // Azul claro cuando no está enfocado
-val TextFieldFocusedColor = Color(0xFF89C2E2) // Azul más oscuro cuando está enfocado
-val TextColor = Color(0xFF5F6368) // Color del texto dentro del TextField
 
 
 @Composable
@@ -43,11 +40,11 @@ fun CustomTextField(
             value = textState,
             onValueChange = { textState = it },
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = TextFieldColor, // Color cuando no está enfocado
-                focusedContainerColor = TextFieldFocusedColor, // Color cuando está enfocado
-                cursorColor = TextColor, // Color del cursor
-                focusedTextColor = TextColor, // Color del texto cuando está enfocado
-                unfocusedTextColor = TextColor, // Color del texto cuando no está enfocado
+                unfocusedContainerColor = LightBlue, // Color cuando no está enfocado
+                focusedContainerColor = LightBlueDark, // Color cuando está enfocado
+                cursorColor = Gray, // Color del cursor
+                focusedTextColor = Gray, // Color del texto cuando está enfocado
+                unfocusedTextColor = Gray, // Color del texto cuando no está enfocado
                 focusedIndicatorColor = Color.Transparent, // Elimina la línea inferior cuando está enfocado
                 unfocusedIndicatorColor = Color.Transparent, // Elimina la línea inferior cuando no está enfocado
                 disabledIndicatorColor = Color.Transparent // Elimina la línea inferior cuando está deshabilitado
@@ -58,14 +55,14 @@ fun CustomTextField(
                     style = TextStyle(
                         fontFamily = OpenSansNormal,
                         fontSize = 18.sp,
-                        color = TextColor
+                        color = Gray
                     )
                 )
             },
             textStyle = TextStyle(
                 fontFamily = OpenSansNormal,
                 fontSize = 18.sp,
-                color = TextColor
+                color = Color.Black
             ),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.fillMaxWidth()
@@ -95,11 +92,11 @@ fun CustomTextFieldPassword(
             value = textState,
             onValueChange = { textState = it },
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = TextFieldColor, // Color cuando no está enfocado
-                focusedContainerColor = TextFieldFocusedColor, // Color cuando está enfocado
-                cursorColor = TextColor, // Color del cursor
-                focusedTextColor = TextColor, // Color del texto cuando está enfocado
-                unfocusedTextColor = TextColor, // Color del texto cuando no está enfocado
+                unfocusedContainerColor = LightBlue, // Color cuando no está enfocado
+                focusedContainerColor = LightBlueDark, // Color cuando está enfocado
+                cursorColor = Gray, // Color del cursor
+                focusedTextColor = Gray, // Color del texto cuando está enfocado
+                unfocusedTextColor = Gray, // Color del texto cuando no está enfocado
                 focusedIndicatorColor = Color.Transparent, //  Elimina la línea inferior cuando está enfocado
                 unfocusedIndicatorColor = Color.Transparent //  Elimina la línea inferior cuando no está enfocado
             ),
@@ -108,15 +105,15 @@ fun CustomTextFieldPassword(
                     text = placeholder,
                     style = TextStyle(
                         fontFamily = OpenSansNormal,
-                        fontSize = 16.sp,
-                        color = TextColor
+                        fontSize = 18.sp,
+                        color = Gray
                     )
                 )
             },
             textStyle = TextStyle(
                 fontFamily = OpenSansNormal,
                 fontSize = 18.sp,
-                color = TextColor
+                color = Color.Black
             ),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.fillMaxWidth(),
