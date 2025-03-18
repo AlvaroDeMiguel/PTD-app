@@ -24,11 +24,12 @@ import com.example.ptdapp.ui.theme.Gray
 import com.example.ptdapp.ui.theme.LightBlue
 import com.example.ptdapp.ui.theme.LightGray
 import com.example.ptdapp.ui.theme.OpenSansNormal
+import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
-    val items = listOf(BottomNavItem.Home, BottomNavItem.Wallet, BottomNavItem.Notifications)
+    val items = listOf(BottomNavItem.Wallet, BottomNavItem.Home, BottomNavItem.Notifications)
     var selectedItem by remember { mutableStateOf(BottomNavItem.Home.route) } // Guardar la ruta en String
 
     Scaffold(
@@ -44,7 +45,9 @@ fun MainScreen(navController: NavHostController) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                painter = painterResource(id = currentItem?.icon ?: R.drawable.home),
+                                painter = painterResource(
+                                    id = currentItem?.icon ?: R.drawable.home
+                                ),
                                 contentDescription = currentItem?.title,
                                 modifier = Modifier.size(42.dp),
                                 tint = Gray
@@ -92,7 +95,9 @@ fun MainScreen(navController: NavHostController) {
                     items.forEach { item ->
                         NavigationBarItem(
                             selected = selectedItem == item.route, // Comparar con la ruta
-                            onClick = { selectedItem = item.route }, // Guardar la ruta al seleccionar
+                            onClick = {
+                                selectedItem = item.route
+                            }, // Guardar la ruta al seleccionar
                             icon = {
                                 Box(contentAlignment = Alignment.Center) {
                                     if (selectedItem == item.route) {
@@ -106,7 +111,7 @@ fun MainScreen(navController: NavHostController) {
                                         painter = painterResource(id = item.icon),
                                         contentDescription = item.title,
                                         modifier = Modifier.size(38.dp), // Tamaño del icono
-                                        tint =  Gray // Cambio de color cuando está seleccionado
+                                        tint = Gray // Cambio de color cuando está seleccionado
                                     )
                                 }
                             },
@@ -116,6 +121,36 @@ fun MainScreen(navController: NavHostController) {
                         )
                     }
                 }
+            }
+        },
+        floatingActionButton = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally, // Centra el icono y el texto
+                modifier = Modifier.padding(10.dp)
+            ) {
+                IconButton(
+                    onClick = { navController.navigate(Destinations.CREATE_PTD_SCREEN) },
+                    modifier = Modifier
+                        .size(60.dp) // Ajusta el tamaño del icono
+                        .background(Color.Transparent) // Fondo totalmente transparente
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.add_circle),
+                        contentDescription = "Añadir",
+                        modifier = Modifier.size(60.dp), // Ajusta al tamaño necesario
+                        tint = BlueLight
+                    )
+                }
+
+
+                Text(
+                    text = "Crear PTD",
+                    style = TextStyle(
+                        fontFamily = OpenSansSemiCondensed,
+                        fontSize = 11.sp,
+                        color = BlueLight
+                    )
+                )
             }
         }
 
@@ -135,8 +170,10 @@ fun MainScreen(navController: NavHostController) {
     }
 }
 
+
 sealed class BottomNavItem(val route: String, val title: String, val icon: Int) {
     object Wallet : BottomNavItem("wallet", "Cartera", R.drawable.wallet)
     object Home : BottomNavItem("home", "Inicio", R.drawable.home)
-    object Notifications : BottomNavItem("notifications", "Notificaciones", R.drawable.notifications)
+    object Notifications :
+        BottomNavItem("notifications", "Notificaciones", R.drawable.notifications)
 }

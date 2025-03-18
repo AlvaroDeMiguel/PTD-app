@@ -59,3 +59,51 @@ fun RegisterButtonComponent(onRegisterClick: () -> Unit) {
         )
     }
 }
+
+@Composable
+fun CreatePTDButtonComponent(onCreateClick: () -> Unit) {
+    Button(
+        onClick = {
+            onCreateClick()
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = BlueLight),
+        shape = RoundedCornerShape(10.dp), // Bordes redondeados
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp) // Altura del botón
+    ) {
+        Text(
+            text = "Añadir",
+            fontSize = 19.sp,
+            style = TextStyle(
+                fontFamily = OpenSansSemiCondensed,
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+        )
+    }
+}
+
+@Composable
+fun CreateGastoButtonComponent(onCreateClick: () -> Unit) {
+    Button(
+        onClick = {
+            onCreateClick()
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = BlueLight),
+        shape = RoundedCornerShape(10.dp), // Bordes redondeados
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp) // Altura del botón
+    ) {
+        Text(
+            text = "Añadir",
+            fontSize = 19.sp,
+            style = TextStyle(
+                fontFamily = OpenSansSemiCondensed,
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+        )
+    }
+}

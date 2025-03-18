@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.example.ptdapp.ui.screens.createGastoScreen.CreateGastoScreen
 import com.example.ptdapp.ui.screens.createPTDScreen.CreatePTDScreen
 import com.example.ptdapp.ui.screens.detailGastoScreen.DetailGastoScreen
@@ -22,7 +20,8 @@ import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
 fun NavGraph(navController: NavHostController, isUserLoggedIn: Boolean) {
     NavHost(
         navController = navController,
-        startDestination = if (isUserLoggedIn) Destinations.MAIN_SCREEN else Destinations.LOGIN_SCREEN    )
+        startDestination = if (isUserLoggedIn) Destinations.MAIN_SCREEN else Destinations.LOGIN_SCREEN
+    )
     {
         composable(Destinations.LOGIN_SCREEN) { LoginScreen(navController) }
         composable(Destinations.REGISTER_SCREEN) { RegisterScreen(navController) }
