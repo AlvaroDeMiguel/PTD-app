@@ -20,37 +20,34 @@ import com.example.ptdapp.R
 import androidx.compose.foundation.Image
 
 
-
-
-
 @Composable
 fun CustomTextField(
     label: String,
     placeholder: String,
+    value: String, // Ahora acepta el valor del texto
+    onValueChange: (String) -> Unit // Función para actualizar el valor
 ) {
-    var textState by remember { mutableStateOf(TextFieldValue("")) }
-
-    Column() {
+    Column {
         Text(
             text = label,
             style = TextStyle(
                 fontSize = 26.sp,
                 fontFamily = Dongle,
                 color = Color.Black
-            ),
+            )
         )
         TextField(
-            value = textState,
-            onValueChange = { textState = it },
+            value = value, // Usa el valor pasado como parámetro
+            onValueChange = { onValueChange(it) }, // Llama a la función para actualizarlo
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = LightBlue, // Color cuando no está enfocado
-                focusedContainerColor = LightBlueDark, // Color cuando está enfocado
-                cursorColor = Gray, // Color del cursor
-                focusedTextColor = Gray, // Color del texto cuando está enfocado
-                unfocusedTextColor = Gray, // Color del texto cuando no está enfocado
-                focusedIndicatorColor = Color.Transparent, // Elimina la línea inferior cuando está enfocado
-                unfocusedIndicatorColor = Color.Transparent, // Elimina la línea inferior cuando no está enfocado
-                disabledIndicatorColor = Color.Transparent // Elimina la línea inferior cuando está deshabilitado
+                unfocusedContainerColor = LightBlue,
+                focusedContainerColor = LightBlueDark,
+                cursorColor = Gray,
+                focusedTextColor = Gray,
+                unfocusedTextColor = Gray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             ),
             placeholder = {
                 Text(
@@ -72,6 +69,7 @@ fun CustomTextField(
         )
     }
 }
+
 
 @Composable
 fun CustomBigTextField(
@@ -123,34 +121,36 @@ fun CustomBigTextField(
     }
 }
 
+
 @Composable
 fun CustomTextFieldPassword(
     label: String,
     placeholder: String,
+    value: String, // Ahora acepta el valor del texto
+    onValueChange: (String) -> Unit // Función para actualizar el valor
 ) {
-    var textState by remember { mutableStateOf(TextFieldValue("")) }
     var passwordVisible by remember { mutableStateOf(false) } // Estado para alternar visibilidad
-    Column() {
+
+    Column {
         Text(
             text = label,
             style = TextStyle(
                 fontSize = 26.sp,
-//                fontWeight = FontWeight.Bold,
                 fontFamily = Dongle,
                 color = Color.Black
             ),
         )
         TextField(
-            value = textState,
-            onValueChange = { textState = it },
+            value = value, // Usa el valor pasado como parámetro
+            onValueChange = { onValueChange(it) }, // Llama a la función para actualizarlo
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = LightBlue, // Color cuando no está enfocado
-                focusedContainerColor = LightBlueDark, // Color cuando está enfocado
-                cursorColor = Gray, // Color del cursor
-                focusedTextColor = Gray, // Color del texto cuando está enfocado
-                unfocusedTextColor = Gray, // Color del texto cuando no está enfocado
-                focusedIndicatorColor = Color.Transparent, //  Elimina la línea inferior cuando está enfocado
-                unfocusedIndicatorColor = Color.Transparent //  Elimina la línea inferior cuando no está enfocado
+                unfocusedContainerColor = LightBlue,
+                focusedContainerColor = LightBlueDark,
+                cursorColor = Gray,
+                focusedTextColor = Gray,
+                unfocusedTextColor = Gray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             ),
             placeholder = {
                 Text(

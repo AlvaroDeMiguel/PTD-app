@@ -1,6 +1,7 @@
 package com.example.ptdapp.ui.screens.registerScreen
 
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,73 +9,143 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.ptdapp.R
 import com.example.ptdapp.ui.components.CustomTextField
 import com.example.ptdapp.ui.components.CustomTextFieldPassword
 import com.example.ptdapp.ui.components.RegisterButtonComponent
 import com.example.ptdapp.ui.navigation.Destinations
+import com.example.ptdapp.ui.viewmodel.AuthViewModel
 import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.Dongle
 
-
 @Composable
-fun RegisterScreen(navController: NavHostController) {
+fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = viewModel()) {
+    val context = LocalContext.current
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val user by viewModel.user.collectAsState()
+
+    LaunchedEffect(user) {
+        if (user != null) {
+            Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+            navController.navigate(Destinations.MAIN_SCREEN) // Redirigir tras registro exitoso
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(40.dp),
-
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Label que redirecciona a la screen Login
-        LoginLabel (
-            onLoginClick = {
-                navController.navigate(Destinations.LOGIN_SCREEN)
-            }
-        )
+        LoginLabel {
+            navController.navigate(Destinations.LOGIN_SCREEN)
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
-        // Logo
+
         Image(
-            painter = painterResource(id = R.drawable.logo_transparente), // Reemplaza 'logo' con el nombre correcto del recurso
+            painter = painterResource(id = R.drawable.logo_transparente),
             contentDescription = "Logo de la aplicación",
             modifier = Modifier
-                .width(300.dp)  // Ajusta el tamaño según necesites
-                .height(160.dp),   // Ajusta el tamaño según necesites
-
+                .width(300.dp)
+                .height(160.dp),
         )
         Spacer(modifier = Modifier.height(32.dp))
-        // Línea divisoria
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(4.dp) // Grosor de la línea
-                .background(BlueLight) // Color azul de la línea
+                .height(4.dp)
+                .background(BlueLight)
         )
-        // Campo de correo
-        Spacer(modifier = Modifier.height(88.dp))
-        CustomTextField(label = "Correo electrónico", placeholder = "correo@gmail.com")
-        // Campo de contraseña con icono para mostrar/ocultar
-        Spacer(modifier = Modifier.height(10.dp))
-        CustomTextFieldPassword(label = "Contraseña", placeholder = "********")
-        Spacer(modifier = Modifier.height(10.dp))
-        CustomTextFieldPassword(label = "Confirmar contraseña", placeholder = "********")
-        Spacer(modifier = Modifier.height(70.dp))
 
-        // Botón de Registrarse
-        Spacer(modifier = Modifier.height(24.dp))
-        RegisterButtonComponent(
-            onRegisterClick = {
-                //TODO
-            }
+        Spacer(modifier = Modifier.height(88.dp))
+
+        CustomTextField(
+            label = "Correo electrónico",
+            placeholder = "correo@gmail.com",
+            value = email,
+            onValueChange = { email = it }
         )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        CustomTextFieldPassword(
+            label = "Contraseña",
+            placeholder = "********",
+            value = password,
+            onValueChange = { password = it }
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        CustomTextFieldPassword(
+            label = "Confirmar contraseña",
+            placeholder = "********",
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it }
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+
+        errorMessage?.let {
+            Text(
+                text = it,
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontFamily = Dongle,
+                    color = MaterialTheme.colorScheme.error
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        if (isLoading) {
+            CircularProgressIndicator()
+        } else {
+            RegisterButtonComponent(
+                onRegisterClick = {
+                    if (email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
+                        if (password == confirmPassword) {
+                            viewModel.register(email, password)
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Las contraseñas no coinciden",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Completa todos los campos", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+
     }
 }
 

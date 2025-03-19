@@ -1,6 +1,8 @@
 package com.example.ptdapp.ui.navigation
 
-import androidx.compose.runtime.Composable
+
+import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,16 +17,22 @@ import com.example.ptdapp.ui.screens.notificationScreen.NotificationScreen
 import com.example.ptdapp.ui.screens.profileScreen.ProfileScreen
 import com.example.ptdapp.ui.screens.registerScreen.RegisterScreen
 import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
+import com.example.ptdapp.ui.viewmodel.AuthViewModel
+import com.example.ptdapp.ui.viewmodel.AuthViewModelFactory
 
 @Composable
-fun NavGraph(navController: NavHostController, isUserLoggedIn: Boolean) {
+fun NavGraph(navController: NavHostController) {
+    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory()) // ✅ Usa Factory
+    val user by authViewModel.user.collectAsState()
+
+    val startDestination = if (user != null) Destinations.MAIN_SCREEN else Destinations.LOGIN_SCREEN
+
     NavHost(
         navController = navController,
-        startDestination = if (isUserLoggedIn) Destinations.MAIN_SCREEN else Destinations.LOGIN_SCREEN
-    )
-    {
-        composable(Destinations.LOGIN_SCREEN) { LoginScreen(navController) }
-        composable(Destinations.REGISTER_SCREEN) { RegisterScreen(navController) }
+        startDestination = startDestination
+    ) {
+        composable(Destinations.LOGIN_SCREEN) { LoginScreen(navController, authViewModel) }
+        composable(Destinations.REGISTER_SCREEN) { RegisterScreen(navController, authViewModel) }
         composable(Destinations.MAIN_SCREEN) { MainScreen(navController) }
         composable(Destinations.CREATE_GASTO_SCREEN) { CreateGastoScreen(navController) }
         composable(Destinations.CREATE_PTD_SCREEN) { CreatePTDScreen(navController) }
@@ -32,7 +40,17 @@ fun NavGraph(navController: NavHostController, isUserLoggedIn: Boolean) {
         composable(Destinations.DETAIL_PTD_SCREEN) { DetailPTDScreen(navController) }
         composable(Destinations.HOME_SCREEN) { HomeScreen(navController) }
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
-        composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController) }
+        composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) } // ✅ Pasa el ViewModel
         composable(Destinations.WALLET_SCREEN) { WalletScreen(navController) }
     }
+
+    // ✅ Redirige automáticamente a login si el usuario cierra sesión
+    LaunchedEffect(user) {
+        if (user == null) {
+            navController.navigate(Destinations.LOGIN_SCREEN) {
+                popUpTo(Destinations.LOGIN_SCREEN) { inclusive = true } // ✅ Limpia la pila de navegación
+            }
+        }
+    }
 }
+
