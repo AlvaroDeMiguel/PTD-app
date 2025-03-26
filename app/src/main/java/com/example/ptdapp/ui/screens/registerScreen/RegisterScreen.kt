@@ -30,6 +30,7 @@ import com.example.ptdapp.ui.components.CustomTextFieldPassword
 import com.example.ptdapp.ui.components.RegisterButtonComponent
 import com.example.ptdapp.ui.navigation.Destinations
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
+import com.example.ptdapp.ui.components.LogoSpinner
 import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.Dongle
 
@@ -47,83 +48,84 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
     LaunchedEffect(user) {
         if (user != null) {
             Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-            navController.navigate(Destinations.MAIN_SCREEN) // Redirigir tras registro exitoso
+            navController.navigate(Destinations.MAIN_SCREEN)
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        LoginLabel {
-            navController.navigate(Destinations.LOGIN_SCREEN)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Image(
-            painter = painterResource(id = R.drawable.logo_transparente),
-            contentDescription = "Logo de la aplicación",
+    Box(modifier = Modifier.fillMaxSize()) {
+        // ⬇ Contenido principal
+        Column(
             modifier = Modifier
-                .width(300.dp)
-                .height(160.dp),
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+                .fillMaxSize()
+                .padding(40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            LoginLabel {
+                navController.navigate(Destinations.LOGIN_SCREEN)
+            }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .background(BlueLight)
-        )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(88.dp))
-
-        CustomTextField(
-            label = "Correo electrónico",
-            placeholder = "correo@gmail.com",
-            value = email,
-            onValueChange = { email = it }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        CustomTextFieldPassword(
-            label = "Contraseña",
-            placeholder = "********",
-            value = password,
-            onValueChange = { password = it }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        CustomTextFieldPassword(
-            label = "Confirmar contraseña",
-            placeholder = "********",
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it }
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-
-        errorMessage?.let {
-            Text(
-                text = it,
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontFamily = Dongle,
-                    color = MaterialTheme.colorScheme.error
-                )
+            Image(
+                painter = painterResource(id = R.drawable.logo_transparente),
+                contentDescription = "Logo de la aplicación",
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(160.dp),
             )
-        }
 
-        Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-        if (isLoading) {
-            CircularProgressIndicator()
-        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(BlueLight)
+            )
+
+            Spacer(modifier = Modifier.height(88.dp))
+
+            CustomTextField(
+                label = "Correo electrónico",
+                placeholder = "correo@gmail.com",
+                value = email,
+                onValueChange = { email = it }
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            CustomTextFieldPassword(
+                label = "Contraseña",
+                placeholder = "********",
+                value = password,
+                onValueChange = { password = it }
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            CustomTextFieldPassword(
+                label = "Confirmar contraseña",
+                placeholder = "********",
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it }
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = Dongle,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
             RegisterButtonComponent(
                 onRegisterClick = {
                     if (email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
@@ -137,16 +139,25 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
                             ).show()
                         }
                     } else {
-                        Toast.makeText(context, "Completa todos los campos", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(
+                            context,
+                            "Completa todos los campos",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
 
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        // ⬇ Spinner flotante si está cargando
+        if (isLoading) {
+            LogoSpinner()
+        }
     }
 }
+
 
 
 @Composable

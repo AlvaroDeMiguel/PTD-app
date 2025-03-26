@@ -16,8 +16,12 @@ data class PerfilUsuario(
 )
 
 class ProfileViewModel(
-    private val repository: ProfileRepository = ProfileRepository()
+    private val repository: ProfileRepository = ProfileRepository(),
+
 ) : ViewModel() {
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _user = MutableStateFlow<PerfilUsuario?>(null)
     val user: StateFlow<PerfilUsuario?> = _user
@@ -31,18 +35,23 @@ class ProfileViewModel(
 
     fun cargarDatosUsuario() {
         viewModelScope.launch {
+            _isLoading.value = true
             val perfil = repository.obtenerPerfil()
             _user.value = perfil
+            _isLoading.value = false
         }
     }
 
+
     fun actualizarPerfil(nombre: String, pais: String, ciudad: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             val actualizado = repository.actualizarPerfil(nombre, pais, ciudad)
             if (actualizado) {
                 _user.value = _user.value?.copy(nombre = nombre, pais = pais, ciudad = ciudad)
                 _mensajeGuardado.value = true
             }
+            _isLoading.value = false
         }
     }
 

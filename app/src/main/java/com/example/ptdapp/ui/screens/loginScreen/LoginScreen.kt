@@ -27,6 +27,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
+import com.example.ptdapp.ui.components.LogoSpinner
 
 
 @Composable
@@ -46,68 +47,68 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        RegisterLabel { navController.navigate(Destinations.REGISTER_SCREEN) }
-        Spacer(modifier = Modifier.height(16.dp))
+    // ⬇ Envolvemos todo en un Box para superponer el spinner
+    Box(modifier = Modifier.fillMaxSize()) {
 
-        Image(
-            painter = painterResource(id = R.drawable.logo_transparente),
-            contentDescription = "Logo de la aplicación",
+        Column(
             modifier = Modifier
-                .width(300.dp)
-                .height(160.dp),
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+                .fillMaxSize()
+                .padding(40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            RegisterLabel { navController.navigate(Destinations.REGISTER_SCREEN) }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .background(BlueLight)
-        )
-
-        Spacer(modifier = Modifier.height(117.dp))
-
-        CustomTextField(
-            label = "Correo electrónico",
-            placeholder = "correo@gmail.com",
-            value = email
-        ) { email = it }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        CustomTextFieldPassword(
-            label = "Contraseña",
-            placeholder = "********",
-            value = password
-        ) { password = it }
-
-        ForgotPasswordLabel(viewModel, label = "He olvidado mi contraseña")
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        errorMessage?.let {
-            Text(
-                text = it,
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontFamily = Dongle,
-                    color = MaterialTheme.colorScheme.error
-                )
+            Image(
+                painter = painterResource(id = R.drawable.logo_transparente),
+                contentDescription = "Logo de la aplicación",
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(160.dp),
             )
-        }
+            Spacer(modifier = Modifier.height(32.dp))
 
-        Spacer(modifier = Modifier.height(97.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(BlueLight)
+            )
 
-        if (isLoading) {
-            CircularProgressIndicator()
-        } else {
+            Spacer(modifier = Modifier.height(117.dp))
+
+            CustomTextField(
+                label = "Correo electrónico",
+                placeholder = "correo@gmail.com",
+                value = email
+            ) { email = it }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            CustomTextFieldPassword(
+                label = "Contraseña",
+                placeholder = "********",
+                value = password
+            ) { password = it }
+
+            ForgotPasswordLabel(viewModel, label = "He olvidado mi contraseña")
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = Dongle,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(97.dp))
+
             LoginButtonComponent {
                 if (email.isNotEmpty() && password.isNotEmpty()) {
                     viewModel.login(email, password)
@@ -117,8 +118,13 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
             }
         }
 
+        // ⬇ Spinner sobre toda la pantalla
+        if (isLoading) {
+            LogoSpinner()
+        }
     }
 }
+
 
 
 @Composable
@@ -181,6 +187,8 @@ fun ForgotPasswordLabel(viewModel: AuthViewModel, label : String) {
             }
         )
     }
+
+
 }
 
 

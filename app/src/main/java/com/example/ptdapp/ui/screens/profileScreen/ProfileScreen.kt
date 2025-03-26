@@ -16,110 +16,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.ptdapp.R
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
+import com.example.ptdapp.ui.components.LogoSpinner
 import com.example.ptdapp.ui.components.ProfileTextFieldStyled
 import com.example.ptdapp.ui.navigation.Destinations
 import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.OpenSansNormal
 import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
-
-@Composable
-fun ProfileScreen2(
-    navController: NavHostController,
-    authViewModel: AuthViewModel,
-    profileViewModel: ProfileViewModel = viewModel()
-) {
-    val firebaseUser = authViewModel.user.collectAsState().value
-    val firestoreUser = profileViewModel.user.collectAsState().value
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clickable(onClick = { navController.popBackStack() })
-                .padding(top = 25.dp, start = 10.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.arrow_back_ios),
-                contentDescription = "Cancelar",
-                modifier = Modifier.size(24.dp),
-                tint = BlueLight
-            )
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Perfil",
-            fontSize = 31.sp,
-            fontFamily = OpenSansSemiCondensed,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Icon(
-            painter = painterResource(id = R.drawable.account_circle),
-            contentDescription = "Usuario",
-            tint = BlueLight,
-            modifier = Modifier.size(120.dp)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        ProfileTextFieldStyled(
-            label = "Correo electrónico",
-            placeholder = "correo@gmail.com",
-            value = firebaseUser?.email ?: ""
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ProfileTextFieldStyled(
-            label = "Nombre",
-            placeholder = "nombre",
-            value = firestoreUser?.nombre ?: ""
-        )
-
-        ProfileTextFieldStyled(
-            label = "País",
-            placeholder = "país",
-            value = firestoreUser?.pais ?: ""
-        )
-
-        ProfileTextFieldStyled(
-            label = "Ciudad",
-            placeholder = "ciudad",
-            value = firestoreUser?.ciudad ?: ""
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(onClick = {
-            navController.navigate(Destinations.EDIT_PROFILE_SCREEN)
-        }) {
-            Text("Editar perfil")
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        TextButton(onClick = { authViewModel.logout() }) {
-            Text(
-                text = "Cerrar Sesión",
-                fontFamily = OpenSansNormal,
-                fontSize = 18.sp,
-                color = Color.Red
-            )
-        }
-    }
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,9 +31,10 @@ fun ProfileScreen(
     authViewModel: AuthViewModel,
     profileViewModel: ProfileViewModel = viewModel()
 ) {
+
     val firebaseUser = authViewModel.user.collectAsState().value
     val firestoreUser = profileViewModel.user.collectAsState().value
-
+    val isLoading by profileViewModel.isLoading.collectAsState()
     val showBottomSheet = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -249,6 +152,9 @@ fun ProfileScreen(
                 }
             )
         }
+    }
+    if (isLoading) {
+        LogoSpinner()
     }
 }
 

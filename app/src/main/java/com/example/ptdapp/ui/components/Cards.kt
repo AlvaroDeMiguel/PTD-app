@@ -268,9 +268,69 @@ fun SelectPersonCard(personas: List<String>) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NotificationCard(
+    title: String,
+    description: String,
+    onDelete: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(19.dp),
+        colors = CardDefaults.cardColors(containerColor = CardColor),
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(35.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            // Título y descripción
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+//                    fontFamily = OpenSansSemiCondensed,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = description,
+                    fontSize = 15.sp,
+//                    fontFamily = OpenSansSemiCondensed,
+                    color = Color.Black
+                )
+            }
+
+            Spacer(modifier = Modifier.width(25.dp))
+            // Icono de basura a la derecha
+            IconButton(onClick = onDelete) {
+                Icon(
+                    painter = painterResource(id = R.drawable.delete),
+                    contentDescription = "Eliminar",
+                    modifier = Modifier.size(40.dp),
+                    tint = IconColor
+                )
+            }
+        }
+    }
+}
+
+
 
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewCustomCardWithIcons() {
+fun PreviewNotificationCardCustom() {
+    NotificationCard(
+        title = "Nueva deuda añadida",
+        description = "María te ha añadido una deuda de 15,50€",
+        onDelete = {} // Acción vacía para el preview
+    )
 }
+

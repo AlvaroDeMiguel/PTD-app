@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ptdapp.ui.components.LogoSpinner
 import com.example.ptdapp.ui.components.ProfileTextFieldStyled
 import com.example.ptdapp.ui.components.SelectorPaisCiudadStyled
 import com.example.ptdapp.ui.theme.BlueLight
@@ -28,6 +29,7 @@ fun EditProfileContent(
     val mensajeGuardado by profileViewModel.mensajeGuardado.collectAsState()
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val isLoading by profileViewModel.isLoading.collectAsState()
 
     var nombre by remember { mutableStateOf("") }
     var pais by remember { mutableStateOf("") }
@@ -105,6 +107,10 @@ fun EditProfileContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         SnackbarHost(hostState = snackbarHostState)
+
+        if (isLoading) {
+            LogoSpinner()
+        }
     }
 }
 
