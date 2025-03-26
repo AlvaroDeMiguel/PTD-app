@@ -76,4 +76,8 @@ dependencies {
     //Leer Json
     implementation ("com.google.code.gson:gson:2.10.1")
 
+    //Funciones asincronas (.await)
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+
 }

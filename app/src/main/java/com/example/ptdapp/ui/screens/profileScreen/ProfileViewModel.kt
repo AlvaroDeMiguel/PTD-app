@@ -1,12 +1,11 @@
 package com.example.ptdapp.ui.screens.profileScreen
 
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.viewModelScope
+import com.example.ptdapp.data.repositories.ProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-
+import kotlinx.coroutines.launch
 
 data class PerfilUsuario(
     val uid: String = "",
@@ -16,14 +15,13 @@ data class PerfilUsuario(
     val ciudad: String = ""
 )
 
-class ProfileViewModel : ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
-    private val db = FirebaseFirestore.getInstance()
+class ProfileViewModel(
+    private val repository: ProfileRepository = ProfileRepository()
+) : ViewModel() {
 
     private val _user = MutableStateFlow<PerfilUsuario?>(null)
     val user: StateFlow<PerfilUsuario?> = _user
 
-    // 🔔 Estado para mostrar snackbar
     private val _mensajeGuardado = MutableStateFlow(false)
     val mensajeGuardado: StateFlow<Boolean> = _mensajeGuardado
 
@@ -32,30 +30,23 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun cargarDatosUsuario() {
-        val uid = auth.currentUser?.uid ?: return
-        db.collection("users").document(uid).get()
-            .addOnSuccessListener { doc ->
-                val user = doc.toObject(PerfilUsuario::class.java)
-                _user.value = user
-            }
+        viewModelScope.launch {
+            val perfil = repository.obtenerPerfil()
+            _user.value = perfil
+        }
     }
 
     fun actualizarPerfil(nombre: String, pais: String, ciudad: String) {
-        val uid = auth.currentUser?.uid ?: return
-        val updates = mapOf(
-            "nombre" to nombre,
-            "pais" to pais,
-            "ciudad" to ciudad
-        )
-        db.collection("users").document(uid).update(updates)
-            .addOnSuccessListener {
+        viewModelScope.launch {
+            val actualizado = repository.actualizarPerfil(nombre, pais, ciudad)
+            if (actualizado) {
                 _user.value = _user.value?.copy(nombre = nombre, pais = pais, ciudad = ciudad)
-                _mensajeGuardado.value = true // ✅ Activa mensaje
+                _mensajeGuardado.value = true
             }
+        }
     }
 
     fun resetMensajeGuardado() {
         _mensajeGuardado.value = false
     }
 }
-
