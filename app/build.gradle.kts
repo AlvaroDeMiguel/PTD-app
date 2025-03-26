@@ -81,5 +81,8 @@ dependencies {
     //Funciones asincronas (.await)
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
+    //Google pay
+    implementation ("com.google.android.gms:play-services-wallet:19.3.0")
+
 
 }

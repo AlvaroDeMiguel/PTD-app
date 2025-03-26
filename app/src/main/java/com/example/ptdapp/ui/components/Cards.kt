@@ -284,7 +284,7 @@ fun NotificationCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(35.dp),
+                .padding(25.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -295,14 +295,14 @@ fun NotificationCard(
                 Text(
                     text = title,
                     fontSize = 20.sp,
-//                    fontFamily = OpenSansSemiCondensed,
+                    fontFamily = OpenSansSemiCondensed,
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = description,
                     fontSize = 15.sp,
-//                    fontFamily = OpenSansSemiCondensed,
+                    fontFamily = OpenSansSemiCondensed,
                     color = Color.Black
                 )
             }

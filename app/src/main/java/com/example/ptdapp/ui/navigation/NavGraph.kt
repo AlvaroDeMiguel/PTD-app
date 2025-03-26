@@ -1,7 +1,9 @@
 package com.example.ptdapp.ui.navigation
 
 
+import android.app.Activity
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,6 +21,8 @@ import com.example.ptdapp.ui.screens.registerScreen.RegisterScreen
 import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
+import com.example.ptdapp.ui.screens.payment.PaymentScreen
+import com.example.ptdapp.ui.screens.payment.PaymentViewModel
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -42,7 +46,9 @@ fun NavGraph(navController: NavHostController) {
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
         composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) } // ✅ Pasa el ViewModel
         composable(Destinations.WALLET_SCREEN) { WalletScreen(navController) }
-//        composable(Destinations.EDIT_PROFILE_SCREEN){ EditProfileScreen(navController) }
+        composable(Destinations.PAYMENT_SCREEN) { PaymentScreen(navController) }
+
+
     }
 
     // ✅ Redirige automáticamente a login si el usuario cierra sesión
