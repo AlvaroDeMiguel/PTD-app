@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.ptdapp.R
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 
 
 @Composable
@@ -39,16 +40,7 @@ fun CustomTextField(
         TextField(
             value = value, // Usa el valor pasado como parámetro
             onValueChange = { onValueChange(it) }, // Llama a la función para actualizarlo
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = LightBlue,
-                focusedContainerColor = LightBlueDark,
-                cursorColor = Gray,
-                focusedTextColor = Gray,
-                unfocusedTextColor = Gray,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
+            colors = textFieldColors(),
             placeholder = {
                 Text(
                     text = placeholder,
@@ -90,16 +82,7 @@ fun CustomBigTextField(
         TextField(
             value = textState,
             onValueChange = { textState = it },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = LightBlue, // Color cuando no está enfocado
-                focusedContainerColor = LightBlueDark, // Color cuando está enfocado
-                cursorColor = Gray, // Color del cursor
-                focusedTextColor = Gray, // Color del texto cuando está enfocado
-                unfocusedTextColor = Gray, // Color del texto cuando no está enfocado
-                focusedIndicatorColor = Color.Transparent, // Elimina la línea inferior cuando está enfocado
-                unfocusedIndicatorColor = Color.Transparent, // Elimina la línea inferior cuando no está enfocado
-                disabledIndicatorColor = Color.Transparent // Elimina la línea inferior cuando está deshabilitado
-            ),
+            colors = textFieldColors(),
             placeholder = {
                 Text(
                     text = placeholder,
@@ -143,15 +126,7 @@ fun CustomTextFieldPassword(
         TextField(
             value = value, // Usa el valor pasado como parámetro
             onValueChange = { onValueChange(it) }, // Llama a la función para actualizarlo
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = LightBlue,
-                focusedContainerColor = LightBlueDark,
-                cursorColor = Gray,
-                focusedTextColor = Gray,
-                unfocusedTextColor = Gray,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
+            colors = textFieldColors(),
             placeholder = {
                 Text(
                     text = placeholder,
@@ -213,16 +188,7 @@ fun CustomTextFieldIcon(
         TextField(
             value = textState,
             onValueChange = { textState = it },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = LightBlue,
-                focusedContainerColor = LightBlueDark,
-                cursorColor = Gray,
-                focusedTextColor = Gray,
-                unfocusedTextColor = Gray,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
+            colors = textFieldColors(),
             placeholder = {
                 Text(
                     text = placeholder,
@@ -297,16 +263,7 @@ fun CustomTextFieldFixedIcon(
         TextField(
             value = textState,
             onValueChange = { textState = it },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = LightBlue,
-                focusedContainerColor = LightBlueDark,
-                cursorColor = Color.Gray,
-                focusedTextColor = Color.Gray,
-                unfocusedTextColor = Color.Gray,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
+            colors = textFieldColors(),
             placeholder = {
                 Text(
                     text = placeholder,
@@ -335,6 +292,72 @@ fun CustomTextFieldFixedIcon(
         )
     }
 }
+
+@Composable
+fun ProfileTextFieldStyled(
+    label: String,
+    placeholder: String,
+    value: String,
+    onValueChange: ((String) -> Unit)? = null, // Ahora es opcional
+    trailingIcon: @Composable (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
+    readOnly: Boolean = true
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            style = TextStyle(
+                fontSize = 25.sp,
+                fontFamily = Dongle,
+                color = Color.Black
+            )
+        )
+        TextField(
+            value = value,
+            onValueChange = onValueChange ?: {}, // Si no se pasa, no hace nada
+            readOnly = readOnly,
+            enabled = !readOnly, // Solo editable si no está en modo lectura
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = OpenSansNormal,
+                        color = Gray
+                    )
+                )
+            },
+            textStyle = TextStyle(
+                fontSize = 15.sp,
+                fontFamily = OpenSansNormal,
+                color = Color.Black
+            ),
+            trailingIcon = trailingIcon,
+            shape = RoundedCornerShape(10.dp),
+            colors = textFieldColors(),
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+
+
+
+@Composable
+private fun textFieldColors() = TextFieldDefaults.colors(
+    unfocusedContainerColor = LightBlue,
+    focusedContainerColor = LightBlueDark,
+    cursorColor = Gray,
+    focusedTextColor = Gray,
+    unfocusedTextColor = Gray,
+    focusedIndicatorColor = Color.Transparent,
+    unfocusedIndicatorColor = Color.Transparent,
+    disabledIndicatorColor = Color.Transparent,
+
+    // 🔥 Añade estas dos líneas:
+    disabledContainerColor = LightBlue,
+    disabledTextColor = Color.Black
+)
 
 
 

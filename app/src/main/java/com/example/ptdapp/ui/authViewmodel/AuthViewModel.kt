@@ -1,14 +1,17 @@
-package com.example.ptdapp.ui.viewmodel
+package com.example.ptdapp.ui.authViewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ptdapp.data.repositories.AuthRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
+
 
     private val _user = MutableStateFlow<FirebaseUser?>(repository.getCurrentUser())
     val user: StateFlow<FirebaseUser?> = _user
@@ -28,6 +31,7 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             result.onSuccess { firebaseUser ->
                 _user.value = firebaseUser
                 _errorMessage.value = null // Limpia el error si el login es exitoso
+                crearDocumentoUsuarioSiNoExiste()
             }.onFailure { exception ->
                 _errorMessage.value = getAuthErrorMessage(exception.message)
             }
@@ -43,6 +47,7 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             result.onSuccess { firebaseUser ->
                 _user.value = firebaseUser
                 _errorMessage.value = null // Limpia el error si el registro es exitoso
+                crearDocumentoUsuarioSiNoExiste()
             }.onFailure { exception ->
                 _errorMessage.value = getAuthErrorMessage(exception.message)
             }
@@ -53,6 +58,31 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         repository.logout()
         _user.value = null
     }
+
+    private fun crearDocumentoUsuarioSiNoExiste() {
+        val user = repository.getCurrentUser() ?: return
+        val uid = user.uid
+        val email = user.email ?: return
+
+        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(uid)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (!document.exists()) {
+                val nombreDefecto = email.substringBefore("@").replaceFirstChar { it.uppercase() }
+
+                val nuevoUsuario = mapOf(
+                    "uid" to uid,
+                    "email" to email,
+                    "nombre" to nombreDefecto,
+                    "pais" to "",
+                    "ciudad" to ""
+                )
+                userRef.set(nuevoUsuario)
+            }
+        }
+    }
+
 
     fun resetPassword(email: String) {
         viewModelScope.launch {

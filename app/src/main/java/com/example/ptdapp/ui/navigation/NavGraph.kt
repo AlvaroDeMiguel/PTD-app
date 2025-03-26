@@ -17,8 +17,8 @@ import com.example.ptdapp.ui.screens.notificationScreen.NotificationScreen
 import com.example.ptdapp.ui.screens.profileScreen.ProfileScreen
 import com.example.ptdapp.ui.screens.registerScreen.RegisterScreen
 import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
-import com.example.ptdapp.ui.viewmodel.AuthViewModel
-import com.example.ptdapp.ui.viewmodel.AuthViewModelFactory
+import com.example.ptdapp.ui.authViewmodel.AuthViewModel
+import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -42,6 +42,7 @@ fun NavGraph(navController: NavHostController) {
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
         composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) } // ✅ Pasa el ViewModel
         composable(Destinations.WALLET_SCREEN) { WalletScreen(navController) }
+//        composable(Destinations.EDIT_PROFILE_SCREEN){ EditProfileScreen(navController) }
     }
 
     // ✅ Redirige automáticamente a login si el usuario cierra sesión

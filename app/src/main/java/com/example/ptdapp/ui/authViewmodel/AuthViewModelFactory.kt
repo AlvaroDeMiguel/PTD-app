@@ -1,4 +1,4 @@
-package com.example.ptdapp.ui.viewmodel
+package com.example.ptdapp.ui.authViewmodel
 
 
 

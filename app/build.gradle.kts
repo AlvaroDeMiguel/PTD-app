@@ -71,4 +71,9 @@ dependencies {
     // FIREBASE //
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation(libs.firebaseAuth)
+    implementation ("com.google.firebase:firebase-firestore-ktx")
+
+    //Leer Json
+    implementation ("com.google.code.gson:gson:2.10.1")
+
 }

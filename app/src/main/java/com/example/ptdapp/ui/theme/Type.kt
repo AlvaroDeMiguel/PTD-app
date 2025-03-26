@@ -16,7 +16,7 @@ val OpenSansNormal = FontFamily(
 
 //Tipografia OpenSans semicondensed
 val OpenSansSemiCondensed = FontFamily(
-//    Font(R.font.opensans_semicondensed_bold, FontWeight.Bold),
+    Font(R.font.opensans_semicondensed_bold, FontWeight.Bold),
     Font(R.font.opensans_semicondensed_regular, FontWeight.Normal)
 )
 //Tipografia OpenSans condensed

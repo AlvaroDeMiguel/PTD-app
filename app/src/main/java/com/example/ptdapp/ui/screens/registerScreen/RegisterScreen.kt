@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -30,7 +29,7 @@ import com.example.ptdapp.ui.components.CustomTextField
 import com.example.ptdapp.ui.components.CustomTextFieldPassword
 import com.example.ptdapp.ui.components.RegisterButtonComponent
 import com.example.ptdapp.ui.navigation.Destinations
-import com.example.ptdapp.ui.viewmodel.AuthViewModel
+import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.Dongle
 

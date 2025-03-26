@@ -12,6 +12,7 @@ object Destinations {
     const val PROFILE_SCREEN = "profile"
     const val WALLET_SCREEN = "wallet"
     const val MAIN_SCREEN = "main_screen"
+    const val EDIT_PROFILE_SCREEN = "detail:profile"
 
     fun detailGastoRoute(gastoId: String) = "detail_gasto/$gastoId"
     fun detailPTDRoute(ptdId: String) = "detail_ptd/$ptdId"

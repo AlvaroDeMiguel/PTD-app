@@ -26,7 +26,7 @@ import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ptdapp.ui.viewmodel.AuthViewModel
+import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 
 
 @Composable
@@ -88,7 +88,7 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
             value = password
         ) { password = it }
 
-        ForgotPasswordLabel(viewModel)
+        ForgotPasswordLabel(viewModel, label = "He olvidado mi contraseña")
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -122,7 +122,8 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
 
 
 @Composable
-fun ForgotPasswordLabel(viewModel: AuthViewModel) {
+fun ForgotPasswordLabel(viewModel: AuthViewModel, label : String) {
+
     var showDialog by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -133,7 +134,7 @@ fun ForgotPasswordLabel(viewModel: AuthViewModel) {
         horizontalAlignment = Alignment.End
     ) {
         Text(
-            text = "He olvidado mi contraseña",
+            text = label,
             style = TextStyle(fontFamily = Dongle, fontSize = 20.sp, color = Gray),
             modifier = Modifier.clickable { showDialog = true }
         )

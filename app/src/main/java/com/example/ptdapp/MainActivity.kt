@@ -6,10 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.ptdapp.ui.navigation.NavGraph
-import com.example.ptdapp.ui.viewmodel.AuthViewModel
+import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 import com.example.ptdapp.ui.theme.PTDAppTheme
 import androidx.compose.runtime.collectAsState
-import com.example.ptdapp.ui.viewmodel.AuthViewModelFactory
+import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
