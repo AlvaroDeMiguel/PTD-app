@@ -81,8 +81,10 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
             CustomTextField(
                 label = "Correo electrónico",
                 placeholder = "correo@gmail.com",
-                value = email
-            ) { email = it }
+                value = email,
+                onValueChange = { email = it }
+            )
+
 
             Spacer(modifier = Modifier.height(10.dp))
 

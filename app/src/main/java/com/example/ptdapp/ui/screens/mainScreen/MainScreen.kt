@@ -18,7 +18,6 @@ import com.example.ptdapp.R
 import com.example.ptdapp.ui.navigation.Destinations
 import com.example.ptdapp.ui.screens.homeScreen.HomeScreen
 import com.example.ptdapp.ui.screens.notificationScreen.NotificationScreen
-import com.example.ptdapp.ui.screens.payment.PaymentScreen
 import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
 import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.Gray
@@ -163,8 +162,7 @@ fun MainScreen(navController: NavHostController) {
                 .background(LightGray)
         ) {
             when (selectedItem) {
-//                BottomNavItem.Wallet.route -> WalletScreen(navController)
-                BottomNavItem.Wallet.route -> PaymentScreen(navController) //PRUEBA DE GOOGLE PAY
+                BottomNavItem.Wallet.route -> WalletScreen(navController)
                 BottomNavItem.Home.route -> HomeScreen(navController)
                 BottomNavItem.Notifications.route -> NotificationScreen(navController)
             }

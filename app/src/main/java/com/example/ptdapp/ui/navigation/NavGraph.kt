@@ -21,8 +21,6 @@ import com.example.ptdapp.ui.screens.registerScreen.RegisterScreen
 import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
-import com.example.ptdapp.ui.screens.payment.PaymentScreen
-import com.example.ptdapp.ui.screens.payment.PaymentViewModel
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -44,9 +42,8 @@ fun NavGraph(navController: NavHostController) {
         composable(Destinations.DETAIL_PTD_SCREEN) { DetailPTDScreen(navController) }
         composable(Destinations.HOME_SCREEN) { HomeScreen(navController) }
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
-        composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) } // ✅ Pasa el ViewModel
+        composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) }
         composable(Destinations.WALLET_SCREEN) { WalletScreen(navController) }
-        composable(Destinations.PAYMENT_SCREEN) { PaymentScreen(navController) }
 
 
     }

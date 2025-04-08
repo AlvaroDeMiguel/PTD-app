@@ -23,23 +23,27 @@ import androidx.compose.foundation.background
 
 @Composable
 fun CustomTextField(
-    label: String,
+    label: String? = null,
     placeholder: String,
-    value: String, // Ahora acepta el valor del texto
-    onValueChange: (String) -> Unit // Función para actualizar el valor
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier? = null // <-- ahora es nullable
 ) {
-    Column {
-        Text(
-            text = label,
-            style = TextStyle(
-                fontSize = 26.sp,
-                fontFamily = Dongle,
-                color = Color.Black
+    Column(modifier = modifier ?: Modifier) { // usa Modifier por defecto si es null
+        label?.let {
+            Text(
+                text = it,
+                style = TextStyle(
+                    fontSize = 26.sp,
+                    fontFamily = Dongle,
+                    color = Color.Black
+                )
             )
-        )
+        }
+
         TextField(
-            value = value, // Usa el valor pasado como parámetro
-            onValueChange = { onValueChange(it) }, // Llama a la función para actualizarlo
+            value = value,
+            onValueChange = { onValueChange(it) },
             colors = textFieldColors(),
             placeholder = {
                 Text(
@@ -61,6 +65,7 @@ fun CustomTextField(
         )
     }
 }
+
 
 
 @Composable
@@ -99,7 +104,9 @@ fun CustomBigTextField(
                 color = Color.Black
             ),
             shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.fillMaxWidth().height(150.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
         )
     }
 }
@@ -341,8 +348,6 @@ fun ProfileTextFieldStyled(
 }
 
 
-
-
 @Composable
 private fun textFieldColors() = TextFieldDefaults.colors(
     unfocusedContainerColor = LightBlue,
@@ -358,7 +363,6 @@ private fun textFieldColors() = TextFieldDefaults.colors(
     disabledContainerColor = LightBlue,
     disabledTextColor = Color.Black
 )
-
 
 
 @Preview(showBackground = true)

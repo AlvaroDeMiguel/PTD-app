@@ -107,3 +107,28 @@ fun CreateGastoButtonComponent(onCreateClick: () -> Unit) {
         )
     }
 }
+
+@Composable
+fun IngresarButtonComponent(onIngresarClick: () -> Unit) {
+    Button(
+        onClick = {
+            onIngresarClick()
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = BlueLight),
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .fillMaxWidth(0.5f)
+            .height(50.dp)
+    ) {
+        Text(
+            text = "Ingresar",
+            fontSize = 19.sp,
+            style = TextStyle(
+                fontFamily = OpenSansSemiCondensed,
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+        )
+    }
+}
+
