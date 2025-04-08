@@ -21,9 +21,10 @@ import com.example.ptdapp.ui.screens.registerScreen.RegisterScreen
 import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
+import com.example.ptdapp.ui.screens.walletScreen.WalletViewModel
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController,walletViewModel: WalletViewModel) {
     val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory()) // ✅ Usa Factory
     val user by authViewModel.user.collectAsState()
 
@@ -35,7 +36,7 @@ fun NavGraph(navController: NavHostController) {
     ) {
         composable(Destinations.LOGIN_SCREEN) { LoginScreen(navController, authViewModel) }
         composable(Destinations.REGISTER_SCREEN) { RegisterScreen(navController, authViewModel) }
-        composable(Destinations.MAIN_SCREEN) { MainScreen(navController) }
+        composable(Destinations.MAIN_SCREEN) { MainScreen(navController, walletViewModel) }
         composable(Destinations.CREATE_GASTO_SCREEN) { CreateGastoScreen(navController) }
         composable(Destinations.CREATE_PTD_SCREEN) { CreatePTDScreen(navController) }
         composable(Destinations.DETAIL_GASTO_SCREEN) { DetailGastoScreen(navController) }
@@ -43,7 +44,7 @@ fun NavGraph(navController: NavHostController) {
         composable(Destinations.HOME_SCREEN) { HomeScreen(navController) }
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
         composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) }
-        composable(Destinations.WALLET_SCREEN) { WalletScreen(navController) }
+        composable(Destinations.WALLET_SCREEN) { WalletScreen(navController, walletViewModel) }
 
 
     }

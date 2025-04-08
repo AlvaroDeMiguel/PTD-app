@@ -1,6 +1,7 @@
 package com.example.ptdapp.ui.screens.walletScreen
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.runtime.Composable
@@ -17,27 +18,29 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ptdapp.ui.components.CreateGastoButtonComponent
-import com.example.ptdapp.ui.components.CustomTextField
+import com.example.ptdapp.data.payment.PaymentRepository
 import com.example.ptdapp.ui.components.IngresarButtonComponent
-import com.example.ptdapp.ui.screens.payment.PaymentViewModel
+import com.example.ptdapp.ui.components.NumericTextField
 import com.example.ptdapp.ui.theme.BlueLight
-import com.example.ptdapp.ui.theme.Dongle
 import com.example.ptdapp.ui.theme.Gray
 import com.example.ptdapp.ui.theme.Green
-import com.example.ptdapp.ui.theme.LightBlue
 import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 import com.example.ptdapp.ui.theme.OpenSauce
-import com.example.ptdapp.ui.utils.PaymentUtils.formatPrice
 
 
 @Composable
 fun WalletScreen(
     navController: NavHostController,
-    walletViewModel: WalletViewModel = viewModel(),
+    walletViewModel: WalletViewModel
 ) {
     var customAmount by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val activity = context as Activity
+    val paymentRepository = remember { PaymentRepository() }
+
+    val recargaExitosa by walletViewModel.recargaExitosa.collectAsState()
+    val saldo by walletViewModel.saldo.collectAsState()
+
 
     Column(
         modifier = Modifier
@@ -61,7 +64,7 @@ fun WalletScreen(
 
             ) {
                 Text(
-                    text = "0,00 €",
+                    text = formatPrice1(saldo ?: 0.00),
                     style = TextStyle(
                         fontSize = 25.sp,
                         fontFamily = OpenSauce,
@@ -267,7 +270,7 @@ fun WalletScreen(
                 }
 
                 // Tu CustomTextField
-                CustomTextField(
+                NumericTextField(
                     label = null,
                     placeholder = "0,00",
                     value = customAmount,
@@ -276,12 +279,41 @@ fun WalletScreen(
                 )
 
                 // Botón final
-                IngresarButtonComponent(onIngresarClick = {
-                    // TODO: Acción al presionar el botón
-                })
+                IngresarButtonComponent(
+                    onIngresarClick = {
+                        // Validación del monto ingresado
+                        customAmount.toDoubleOrNull()?.let { amount ->
+                            // 1. Guardamos el monto en el ViewModel
+                            walletViewModel.setPendingAmount(amount)
+
+                            // 2. Lanzamos Google Pay
+                            paymentRepository.launchGooglePay(
+                                context = context,
+                                amount = customAmount,
+                                activity = activity
+                            )
+                        }
+                    }
+                )
+                // Toast confirmación ✅
+                if (recargaExitosa == true) {
+                    LaunchedEffect(recargaExitosa) {
+                        Toast.makeText(
+                            context,
+                            "Ingreso realizado correctamente",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        walletViewModel.resetearRecarga()
+                    }
+                }
             }
         }
     }
-    }
+}
+
+fun formatPrice1(amount: Double): String {
+    return String.format("%.2f €", amount)
+}
+
 
 

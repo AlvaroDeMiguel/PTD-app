@@ -19,6 +19,7 @@ import com.example.ptdapp.ui.navigation.Destinations
 import com.example.ptdapp.ui.screens.homeScreen.HomeScreen
 import com.example.ptdapp.ui.screens.notificationScreen.NotificationScreen
 import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
+import com.example.ptdapp.ui.screens.walletScreen.WalletViewModel
 import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.Gray
 import com.example.ptdapp.ui.theme.LightBlue
@@ -28,7 +29,7 @@ import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(navController: NavHostController, walletViewModel: WalletViewModel) {
     val items = listOf(BottomNavItem.Wallet, BottomNavItem.Home, BottomNavItem.Notifications)
     var selectedItem by remember { mutableStateOf(BottomNavItem.Home.route) } // Guardar la ruta en String
 
@@ -162,7 +163,7 @@ fun MainScreen(navController: NavHostController) {
                 .background(LightGray)
         ) {
             when (selectedItem) {
-                BottomNavItem.Wallet.route -> WalletScreen(navController)
+                BottomNavItem.Wallet.route -> WalletScreen(navController, walletViewModel)
                 BottomNavItem.Home.route -> HomeScreen(navController)
                 BottomNavItem.Notifications.route -> NotificationScreen(navController)
             }

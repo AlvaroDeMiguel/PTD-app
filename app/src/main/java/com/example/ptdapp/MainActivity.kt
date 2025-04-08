@@ -1,28 +1,24 @@
 package com.example.ptdapp
 
 import android.os.Bundle
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.ptdapp.ui.navigation.NavGraph
-import com.example.ptdapp.ui.authViewmodel.AuthViewModel
-import com.example.ptdapp.ui.theme.PTDAppTheme
-import androidx.compose.runtime.collectAsState
-import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
-import android.app.Activity
-import android.content.Intent
-import android.util.Log
 import com.example.ptdapp.data.payment.PaymentRepository
-import com.example.ptdapp.ui.screens.payment.PaymentViewModel
-
+import com.example.ptdapp.ui.authViewmodel.AuthViewModel
+import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
+import com.example.ptdapp.ui.navigation.NavGraph
+import com.example.ptdapp.ui.screens.walletScreen.WalletViewModel
+import com.example.ptdapp.ui.theme.PTDAppTheme
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.PaymentData
 
-
 class MainActivity : ComponentActivity() {
 
-    // Callback que se activará desde onActivityResult
     private var onGooglePayResult: ((Boolean) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,24 +26,21 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            val viewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory())
-            val userState = viewModel.user.collectAsState()
-            val user = userState.value
+            val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory())
+            val walletViewModel: WalletViewModel = viewModel()
 
-            val paymentViewModel: PaymentViewModel = viewModel()
-
-            // Aquí conectamos el resultado de Google Pay al ViewModel
             onGooglePayResult = { success ->
-                paymentViewModel.onPaymentResult(success)
+                if (success) {
+                    walletViewModel.confirmarPagoExitoso()
+                }
             }
 
             PTDAppTheme {
-                NavGraph(navController)
+                NavGraph(navController, walletViewModel = walletViewModel)
             }
         }
     }
 
-    // Captura del resultado de Google Pay
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -66,14 +59,10 @@ class MainActivity : ComponentActivity() {
 
                 AutoResolveHelper.RESULT_ERROR -> {
                     val status = AutoResolveHelper.getStatusFromIntent(data!!)
-                    Log.e("GooglePay", "⚠️ Error: ${status?.statusMessage}")
+                    Log.e("GooglePay", "⚠️ Error en Google Pay: ${status?.statusMessage}")
                     onGooglePayResult?.invoke(false)
                 }
             }
         }
     }
 }
-
-
-
-

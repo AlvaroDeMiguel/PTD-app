@@ -7,14 +7,12 @@ import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
 
-
 class PaymentRepository {
 
     fun launchGooglePay(
         context: Context,
         amount: String,
-        activity: Activity,
-        onResult: (Boolean) -> Unit
+        activity: Activity
     ) {
         val paymentsClient = Wallet.getPaymentsClient(
             context,
@@ -31,8 +29,6 @@ class PaymentRepository {
             activity,
             GOOGLE_PAY_REQUEST_CODE
         )
-
-        // ⚠️ onResult se usa luego en onActivityResult
     }
 
     companion object {

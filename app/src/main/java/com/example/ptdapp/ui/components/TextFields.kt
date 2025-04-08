@@ -18,7 +18,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.ptdapp.R
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 
 @Composable
@@ -44,6 +45,59 @@ fun CustomTextField(
         TextField(
             value = value,
             onValueChange = { onValueChange(it) },
+            colors = textFieldColors(),
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    style = TextStyle(
+                        fontFamily = OpenSansNormal,
+                        fontSize = 18.sp,
+                        color = Gray
+                    )
+                )
+            },
+            textStyle = TextStyle(
+                fontFamily = OpenSansNormal,
+                fontSize = 18.sp,
+                color = Color.Black
+            ),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun NumericTextField(
+    label: String? = null,
+    placeholder: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier? = null
+) {
+    Column(modifier = modifier ?: Modifier) {
+        label?.let {
+            Text(
+                text = it,
+                style = TextStyle(
+                    fontSize = 26.sp,
+                    fontFamily = Dongle,
+                    color = Color.Black
+                )
+            )
+        }
+
+        TextField(
+            value = value,
+            onValueChange = { newValue ->
+                // Acepta solo números y un punto decimal opcional
+                if (newValue.matches(Regex("^\\d{0,9}(\\.\\d{0,2})?$"))) {
+                    onValueChange(newValue)
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
             colors = textFieldColors(),
             placeholder = {
                 Text(
