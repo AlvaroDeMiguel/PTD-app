@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Exclude
 
 
 class NotificationsViewModel : ViewModel() {
@@ -22,15 +24,18 @@ class NotificationsViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _hasUnread = MutableStateFlow(false)
+    val hasUnread: StateFlow<Boolean> = _hasUnread
+
     init {
         viewModelScope.launch {
             repository.getNotificationsFlow().collect { notificationList ->
-                _isLoading.value = false // Esto DEBE ir aquí arriba
                 _notifications.value = notificationList
+                _hasUnread.value = notificationList.any { !it.read }
+                _isLoading.value = false
             }
         }
     }
-
 
     fun deleteNotification(id: String) {
         viewModelScope.launch {
@@ -40,33 +45,35 @@ class NotificationsViewModel : ViewModel() {
         }
     }
 
-    //FUNCION PARA CREAR NOTIFICACIONES DE PRUEBA
-    fun addTestNotification() {
+    fun markAllAsRead() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val ref = FirebaseFirestore.getInstance()
             .collection("users").document(userId)
             .collection("notifications")
 
-        val notification = mapOf(
-            "title" to "Notificación de prueba",
-            "description" to "Esto es solo un test visual"
-        )
-
         viewModelScope.launch {
-            try {
-                ref.add(notification).await()
-                Log.d("AddNotification", "Notificación añadida correctamente")
-            } catch (e: Exception) {
-                Log.e("AddNotification", "Error al añadir notificación", e)
-            }
+            // Solo marcamos las que están sin leer
+            _notifications.value
+                .filter { !it.read }
+                .forEach { notification ->
+                    ref.document(notification.id).update("read", true).await()
+                }
+
+            // Opcional: actualizamos el estado local
+            _hasUnread.value = false
         }
     }
 }
 
 
+
 data class Notification(
-    val id: String = "",
     val title: String = "",
-    val description: String = ""
-)
+    val description: String = "",
+    val timestamp: Timestamp? = null,
+    val read: Boolean = false
+) {
+    @get:Exclude
+    var id: String = ""
+}
 

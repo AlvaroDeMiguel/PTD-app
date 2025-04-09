@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,10 +43,13 @@ fun WalletScreen(
     val recargaExitosa by walletViewModel.recargaExitosa.collectAsState()
     val saldo by walletViewModel.saldo.collectAsState()
 
+    val scrollState = rememberScrollState()
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(top = 20.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {

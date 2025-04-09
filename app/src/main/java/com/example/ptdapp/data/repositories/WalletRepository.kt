@@ -11,7 +11,8 @@ import kotlinx.coroutines.tasks.await
 
 class WalletRepository(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private val notificationsRepository: NotificationsRepository = NotificationsRepository()
 ) {
 
     // 🔄 Flow para observar el saldo en tiempo real
@@ -58,6 +59,7 @@ class WalletRepository(
             }.await()
 
             registrarTransaccion(userId, amount)
+            notificationsRepository.crearNotificacionIngreso(amount)
             true
         } catch (e: Exception) {
             Log.e("WalletRepository", "❌ Error Firebase", e)

@@ -65,11 +65,6 @@ dependencies {
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    // HILT Y KSP
-//    implementation(libs.hilt.android)
-//    ksp(libs.hilt.compiler)
-//    implementation(libs.hilt.navigation.compose)
-
     // FIREBASE //
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation(libs.firebaseAuth)
@@ -83,6 +78,9 @@ dependencies {
 
     //Google pay
     implementation ("com.google.android.gms:play-services-wallet:19.3.0")
+
+    //Animaciones
+    implementation ("androidx.compose.animation:animation:1.7.8")
 
 
 }

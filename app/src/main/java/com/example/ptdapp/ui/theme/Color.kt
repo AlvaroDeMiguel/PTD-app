@@ -15,3 +15,5 @@ val Gray = Color(0xFF5F6368) // #5f6368
 val LightBlue = Color(0xFFA7D8F5) // #a7d8f5
 val LightGray = Color(0xFFEFefEF) // #efefef
 val LightBlueDark = Color(0xFF89C2E2)
+val SoftRed = Color(0xFFD32F2F)
+

@@ -1,5 +1,10 @@
 package com.example.ptdapp.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +25,9 @@ import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 import com.example.ptdapp.ui.theme.OpenSauce
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
+import com.example.ptdapp.ui.screens.notificationScreen.Notification
 import com.example.ptdapp.ui.theme.OpenSansNormal
+import kotlinx.coroutines.delay
 
 
 val IconColor = Color(0xFF5F6368)
@@ -321,16 +328,33 @@ fun NotificationCard(
     }
 }
 
-
-
-
-@Preview(showBackground = true)
 @Composable
-fun PreviewNotificationCardCustom() {
-    NotificationCard(
-        title = "Nueva deuda añadida",
-        description = "María te ha añadido una deuda de 15,50€",
-        onDelete = {} // Acción vacía para el preview
-    )
+fun NotificationCardWithAnimation(
+    notification: Notification,
+    onDeleteConfirmed: (String) -> Unit
+) {
+    var visible by remember { mutableStateOf(true) }
+
+    // Esperar a que visible sea false para lanzar la eliminación
+    LaunchedEffect(visible) {
+        if (!visible) {
+            delay(300) // esperar la animación
+            onDeleteConfirmed(notification.id)
+        }
+    }
+
+    AnimatedVisibility(
+        visible = visible,
+        exit = fadeOut(animationSpec = tween(300)) + slideOutVertically(animationSpec = tween(300)),
+        modifier = Modifier.animateContentSize()
+    ) {
+        NotificationCard(
+            title = notification.title,
+            description = notification.description,
+            onDelete = { visible = false }
+        )
+    }
 }
+
+
 

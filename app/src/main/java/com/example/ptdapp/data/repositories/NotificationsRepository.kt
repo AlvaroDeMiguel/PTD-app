@@ -3,7 +3,9 @@ package com.example.ptdapp.data.repositories
 import android.util.Log
 import com.example.ptdapp.ui.screens.notificationScreen.Notification
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -21,8 +23,10 @@ class NotificationsRepository {
             return@callbackFlow
         }
 
-        val ref = firestore.collection("users").document(userId).collection("notifications")
-
+        val ref = firestore.collection("users")
+            .document(userId)
+            .collection("notifications")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
         val listener = ref.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 Log.e("NotificationsRepository", "Error al obtener notificaciones", error)
@@ -31,9 +35,12 @@ class NotificationsRepository {
             }
 
             if (snapshot != null) {
-                val notifications = snapshot.documents.mapNotNull {
-                    it.toObject(Notification::class.java)?.copy(id = it.id)
+                val notifications = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(Notification::class.java)?.apply {
+                        id = doc.id
+                    }
                 }
+
                 trySend(notifications)
             } else {
                 trySend(emptyList())
@@ -43,10 +50,28 @@ class NotificationsRepository {
         awaitClose { listener.remove() }
     }
 
+    suspend fun crearNotificacionIngreso(amount: Double) {
+        val userId = auth.currentUser?.uid ?: return
+
+        val notificacion = mapOf(
+            "title" to "Ingreso exitoso",
+            "description" to "Se han ingresado ${String.format("%.2f €", amount)} a tu cuenta.",
+            "timestamp" to FieldValue.serverTimestamp(),
+            "read" to false
+        )
+
+
+        firestore.collection("users")
+            .document(userId)
+            .collection("notifications")
+            .add(notificacion)
+            .await()
+    }
 
 
     suspend fun deleteNotification(id: String) {
         val userId = auth.currentUser?.uid ?: return
-        firestore.collection("users").document(userId).collection("notifications").document(id).delete().await()
+        firestore.collection("users").document(userId).collection("notifications").document(id)
+            .delete().await()
     }
 }
