@@ -27,8 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory())
-            val walletViewModel: WalletViewModel = viewModel()
-
+            val walletViewModel = viewModel<WalletViewModel>()
             onGooglePayResult = { success ->
                 if (success) {
                     walletViewModel.confirmarPagoExitoso()

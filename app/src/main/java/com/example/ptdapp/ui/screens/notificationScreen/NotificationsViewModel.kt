@@ -1,6 +1,5 @@
 package com.example.ptdapp.ui.screens.notificationScreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ptdapp.data.repositories.NotificationsRepository
@@ -10,8 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.Exclude
+import com.example.ptdapp.data.model.Notification
+
 
 
 class NotificationsViewModel : ViewModel() {
@@ -29,7 +28,7 @@ class NotificationsViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            repository.getNotificationsFlow().collect { notificationList ->
+            repository.getNotificationsFlow().collect { notificationList: List<Notification> ->
                 _notifications.value = notificationList
                 _hasUnread.value = notificationList.any { !it.read }
                 _isLoading.value = false
@@ -67,13 +66,4 @@ class NotificationsViewModel : ViewModel() {
 
 
 
-data class Notification(
-    val title: String = "",
-    val description: String = "",
-    val timestamp: Timestamp? = null,
-    val read: Boolean = false
-) {
-    @get:Exclude
-    var id: String = ""
-}
 

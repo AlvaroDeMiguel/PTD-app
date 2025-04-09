@@ -42,6 +42,21 @@ class WalletRepository(
         awaitClose { listener.remove() }
     }
 
+    suspend fun obtenerSaldoActual(onResult: (Double?) -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val docRef = firestore.collection("users").document(userId)
+
+        try {
+            val snapshot = docRef.get().await()
+            val balance = snapshot.getDouble("wallet.balance")
+            onResult(balance)
+        } catch (e: Exception) {
+            Log.e("WalletRepository", "Error al obtener saldo actual", e)
+            onResult(null)
+        }
+    }
+
+
     // 💳 Recargar saldo (crea documento automáticamente si no existe)
     suspend fun recargarSaldo(amount: Double): Boolean {
         val userId = auth.currentUser?.uid ?: return false

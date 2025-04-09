@@ -25,7 +25,7 @@ import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 import com.example.ptdapp.ui.theme.OpenSauce
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
-import com.example.ptdapp.ui.screens.notificationScreen.Notification
+import com.example.ptdapp.data.model.Notification
 import com.example.ptdapp.ui.theme.OpenSansNormal
 import kotlinx.coroutines.delay
 
@@ -36,7 +36,7 @@ val CardColor = Color(0xFFA7D8F5)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomCardInicio(
-    text: String,
+    text: String
 ) {
     Card(
         shape = RoundedCornerShape(19.dp),

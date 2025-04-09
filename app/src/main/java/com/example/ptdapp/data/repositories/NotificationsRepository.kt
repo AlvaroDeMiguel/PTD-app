@@ -1,7 +1,7 @@
 package com.example.ptdapp.data.repositories
 
 import android.util.Log
-import com.example.ptdapp.ui.screens.notificationScreen.Notification
+import com.example.ptdapp.data.model.Notification
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore

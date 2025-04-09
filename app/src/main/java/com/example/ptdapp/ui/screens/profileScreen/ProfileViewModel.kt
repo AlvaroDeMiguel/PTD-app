@@ -2,18 +2,13 @@ package com.example.ptdapp.ui.screens.profileScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ptdapp.data.model.PerfilUsuario
 import com.example.ptdapp.data.repositories.ProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class PerfilUsuario(
-    val uid: String = "",
-    val email: String = "",
-    val nombre: String = "",
-    val pais: String = "",
-    val ciudad: String = ""
-)
+
 
 class ProfileViewModel(
     private val repository: ProfileRepository = ProfileRepository(),

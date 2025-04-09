@@ -52,11 +52,19 @@ class WalletViewModel(
             _recargaExitosa.value = success
             if (success) {
                 Log.d("WalletViewModel", "✅ Recarga exitosa")
+
+                // FORZAR LECTURA MANUAL
+                walletRepository.obtenerSaldoActual { newBalance ->
+                    viewModelScope.launch {
+                        _saldo.value = newBalance
+                    }
+                }
             } else {
                 Log.e("WalletViewModel", "❌ Error al recargar")
             }
         }
     }
+
 
 
     fun resetearRecarga() {
