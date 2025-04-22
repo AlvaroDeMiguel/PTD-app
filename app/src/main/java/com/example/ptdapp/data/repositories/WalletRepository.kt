@@ -123,4 +123,25 @@ class WalletRepository(
 
         awaitClose { listener.remove() }
     }
+
+    fun obtenerSaldoDeUsuario(userId: String, callback: (Double?) -> Unit) {
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val walletMap = document.get("wallet") as? Map<*, *>
+                    val saldo = walletMap?.get("balance") as? Double ?: 0.0
+                    Log.d("WalletRepository", "✅ Saldo recuperado correctamente: $saldo")
+                    callback(saldo)
+                } else {
+                    Log.e("WalletRepository", "⚠️ Documento del usuario no existe.")
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("WalletRepository", "❌ Error al obtener saldo", exception)
+                callback(null)
+            }
+    }
+
+
 }

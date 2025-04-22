@@ -6,6 +6,8 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.ptdapp.data.payment.PaymentRepository
@@ -28,6 +30,15 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory())
             val walletViewModel = viewModel<WalletViewModel>()
+
+            val userState = authViewModel.user.collectAsState()
+
+            LaunchedEffect(userState.value?.uid) {
+                userState.value?.let { user ->
+                    walletViewModel.loadUserBalance(user.uid)
+                }
+            }
+
             onGooglePayResult = { success ->
                 if (success) {
                     walletViewModel.confirmarPagoExitoso()

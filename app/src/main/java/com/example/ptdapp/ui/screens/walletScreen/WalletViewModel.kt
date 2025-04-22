@@ -70,4 +70,21 @@ class WalletViewModel(
     fun resetearRecarga() {
         _recargaExitosa.value = null
     }
+
+    fun loadUserBalance(userId: String) {
+        viewModelScope.launch {
+            walletRepository.obtenerSaldoDeUsuario(userId) { saldoRecuperado ->
+                saldoRecuperado?.let { saldo ->
+                    _saldo.value = saldo
+                    Log.d("WalletViewModel", "✅ Saldo inicial cargado: $saldo")
+                } ?: run {
+                    Log.e("WalletViewModel", "❌ Error al recuperar saldo inicial")
+                    _saldo.value = 0.0
+                }
+            }
+        }
+    }
+
 }
+
+
