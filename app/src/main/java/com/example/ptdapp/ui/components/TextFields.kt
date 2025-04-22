@@ -28,9 +28,9 @@ fun CustomTextField(
     placeholder: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier? = null // <-- ahora es nullable
+    modifier: Modifier? = null
 ) {
-    Column(modifier = modifier ?: Modifier) { // usa Modifier por defecto si es null
+    Column(modifier = modifier ?: Modifier) {
         label?.let {
             Text(
                 text = it,
@@ -44,7 +44,9 @@ fun CustomTextField(
 
         TextField(
             value = value,
-            onValueChange = { onValueChange(it) },
+            onValueChange = { newValue ->
+                onValueChange(newValue.replace("\n", "")) // Bloquea ENTER
+            },
             colors = textFieldColors(),
             placeholder = {
                 Text(
@@ -62,10 +64,12 @@ fun CustomTextField(
                 color = Color.Black
             ),
             shape = RoundedCornerShape(10.dp),
+            singleLine = true, // Evita múltiples líneas y ENTER
             modifier = Modifier.fillMaxWidth()
         )
     }
 }
+
 
 @Composable
 fun NumericTextField(
@@ -170,10 +174,10 @@ fun CustomBigTextField(
 fun CustomTextFieldPassword(
     label: String,
     placeholder: String,
-    value: String, // Ahora acepta el valor del texto
-    onValueChange: (String) -> Unit // Función para actualizar el valor
+    value: String,
+    onValueChange: (String) -> Unit
 ) {
-    var passwordVisible by remember { mutableStateOf(false) } // Estado para alternar visibilidad
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Column {
         Text(
@@ -185,8 +189,10 @@ fun CustomTextFieldPassword(
             ),
         )
         TextField(
-            value = value, // Usa el valor pasado como parámetro
-            onValueChange = { onValueChange(it) }, // Llama a la función para actualizarlo
+            value = value,
+            onValueChange = { newValue ->
+                onValueChange(newValue.replace("\n", "")) // Bloquear ENTER
+            },
             colors = textFieldColors(),
             placeholder = {
                 Text(
@@ -205,6 +211,7 @@ fun CustomTextFieldPassword(
             ),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.fillMaxWidth(),
+            singleLine = true, // Evita múltiples líneas
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 Icon(
@@ -215,12 +222,13 @@ fun CustomTextFieldPassword(
                     tint = Gray,
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable { passwordVisible = !passwordVisible } // Alterna la visibilidad
+                        .clickable { passwordVisible = !passwordVisible }
                 )
             }
         )
     }
 }
+
 
 
 @Composable

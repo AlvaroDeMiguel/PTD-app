@@ -45,28 +45,27 @@ fun WalletScreen(
 
     val scrollState = rememberScrollState()
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(top = 20.dp),
+            .verticalScroll(scrollState) // 👈 Scroll si se necesita
+            .imePadding()                // 👈 Mueve el contenido cuando aparece el teclado
+            .padding(top = 20.dp, bottom = 32.dp), // 👈 Espacio abajo para evitar que se tape
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        //BOX DEL SALDO
+        // BOX DEL SALDO
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(150.dp)
                 .border(width = 1.dp, color = Gray)
                 .background(Color.White)
-                .padding(20.dp), // Espaciado interno
+                .padding(20.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
-
             ) {
                 Text(
                     text = formatPrice1(saldo ?: 0.00),
@@ -88,7 +87,7 @@ fun WalletScreen(
             }
         }
 
-        // BOX DEL DEUDAS DIVIDIDO EN TRES PARTES
+        // 👇 DEJADO TAL CUAL pediste ✅
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,20 +95,16 @@ fun WalletScreen(
                 .border(width = 1.dp, color = Gray)
                 .background(Color.White)
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // Parte 1
+            Column(modifier = Modifier.fillMaxSize()) {
                 Row(
                     modifier = Modifier
                         .weight(1.5f)
                         .fillMaxWidth()
-                        .padding(start = 80.dp, end = 80.dp), // mismo padding lateral
+                        .padding(start = 80.dp, end = 80.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Columna izquierda: Etiqueta (alineada a la izquierda)
                     Column(
-                        modifier = Modifier.weight(1f), // espacio proporcional
+                        modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
@@ -122,10 +117,8 @@ fun WalletScreen(
                             )
                         )
                     }
-
-                    // Columna derecha: Cantidad (alineada a la derecha)
                     Column(
-                        modifier = Modifier.weight(1f), // mismo peso
+                        modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
@@ -140,17 +133,15 @@ fun WalletScreen(
                 }
                 HorizontalDivider(color = Gray, thickness = 1.dp)
 
-                // Parte 2
                 Row(
                     modifier = Modifier
                         .weight(1.5f)
                         .fillMaxWidth()
-                        .padding(start = 80.dp, end = 80.dp), // mismo padding lateral
+                        .padding(start = 80.dp, end = 80.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Columna izquierda: Etiqueta (alineada a la izquierda)
                     Column(
-                        modifier = Modifier.weight(1f), // espacio proporcional
+                        modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
@@ -163,10 +154,8 @@ fun WalletScreen(
                             )
                         )
                     }
-
-                    // Columna derecha: Cantidad (alineada a la derecha)
                     Column(
-                        modifier = Modifier.weight(1f), // mismo peso
+                        modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
@@ -182,17 +171,15 @@ fun WalletScreen(
 
                 HorizontalDivider(color = Gray, thickness = 1.dp)
 
-                // Parte 3
                 Row(
                     modifier = Modifier
                         .weight(1.5f)
                         .fillMaxWidth()
-                        .padding(start = 80.dp, end = 80.dp), // mismo padding lateral
+                        .padding(start = 80.dp, end = 80.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Columna izquierda: Etiqueta (alineada a la izquierda)
                     Column(
-                        modifier = Modifier.weight(1f), // espacio proporcional
+                        modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
@@ -205,10 +192,7 @@ fun WalletScreen(
                             )
                         )
                     }
-
-                    // Columna derecha: Cantidad
-                    Column(
-                    ) {
+                    Column {
                         Text(
                             text = "0,00 €",
                             style = TextStyle(
@@ -222,7 +206,7 @@ fun WalletScreen(
             }
         }
 
-        //BOX DE INGRESO
+        // INGRESO DE DINERO
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -236,7 +220,6 @@ fun WalletScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Texto superior
                 Text(
                     text = "Ingresar dinero",
                     style = TextStyle(
@@ -247,19 +230,12 @@ fun WalletScreen(
                     )
                 )
 
-                // Botones de cantidad rápida
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     listOf("10", "20", "50").forEach { amount ->
                         Button(
-                            onClick = {
-                                customAmount = amount
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
-                            ),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp) // sin sombra
+                            onClick = { customAmount = amount },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
                         ) {
                             Text(
                                 text = "$amount €",
@@ -270,28 +246,21 @@ fun WalletScreen(
                                 )
                             )
                         }
-
                     }
                 }
 
-                // Tu CustomTextField
                 NumericTextField(
                     label = null,
                     placeholder = "0,00",
                     value = customAmount,
                     onValueChange = { customAmount = it },
-                    modifier = Modifier.fillMaxWidth(0.4f) // o null si no quieres aplicar ninguno
+                    modifier = Modifier.fillMaxWidth(0.4f)
                 )
 
-                // Botón final
                 IngresarButtonComponent(
                     onIngresarClick = {
-                        // Validación del monto ingresado
                         customAmount.toDoubleOrNull()?.let { amount ->
-                            // 1. Guardamos el monto en el ViewModel
                             walletViewModel.setPendingAmount(amount)
-
-                            // 2. Lanzamos Google Pay
                             paymentRepository.launchGooglePay(
                                 context = context,
                                 amount = customAmount,
@@ -300,7 +269,7 @@ fun WalletScreen(
                         }
                     }
                 )
-                // Toast confirmación ✅
+
                 if (recargaExitosa == true) {
                     LaunchedEffect(recargaExitosa) {
                         Toast.makeText(
@@ -315,6 +284,7 @@ fun WalletScreen(
         }
     }
 }
+
 
 fun formatPrice1(amount: Double): String {
     return String.format("%.2f €", amount)

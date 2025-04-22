@@ -23,6 +23,8 @@ import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.Dongle
 import com.example.ptdapp.ui.theme.Gray
 import android.widget.Toast
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,13 +49,18 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
         }
     }
 
-    // ⬇ Envolvemos todo en un Box para superponer el spinner
-    Box(modifier = Modifier.fillMaxSize()) {
-
+    // ⬇ Envolvemos todo en un Box que adapta al teclado (imePadding)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+    ) {
+        // ⬇ Scrollable column para evitar cortes
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(40.dp),
+                .verticalScroll(rememberScrollState()) // 👈 Scroll
+                .padding(horizontal = 40.dp, vertical = 20.dp), // Espaciado más flexible
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -76,7 +83,7 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
                     .background(BlueLight)
             )
 
-            Spacer(modifier = Modifier.height(117.dp))
+            Spacer(modifier = Modifier.height(32.dp)) // Reducido desde 117.dp
 
             CustomTextField(
                 label = "Correo electrónico",
@@ -84,7 +91,6 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
                 value = email,
                 onValueChange = { email = it }
             )
-
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -109,7 +115,7 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
                 )
             }
 
-            Spacer(modifier = Modifier.height(97.dp))
+            Spacer(modifier = Modifier.height(32.dp)) // También reducida
 
             LoginButtonComponent {
                 if (email.isNotEmpty() && password.isNotEmpty()) {
@@ -118,14 +124,16 @@ fun LoginScreen(navController: NavHostController, viewModel: AuthViewModel = vie
                     Toast.makeText(context, "Completa todos los campos", Toast.LENGTH_SHORT).show()
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp)) // espacio final
         }
 
-        // ⬇ Spinner sobre toda la pantalla
         if (isLoading) {
             LogoSpinner()
         }
     }
 }
+
 
 
 

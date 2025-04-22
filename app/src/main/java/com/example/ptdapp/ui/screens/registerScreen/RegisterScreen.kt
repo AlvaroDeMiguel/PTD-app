@@ -7,6 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,12 +54,16 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // ⬇ Contenido principal
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding() // 👈 Para que el teclado no tape campos
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(40.dp),
+                .verticalScroll(rememberScrollState()) // 👈 Scroll habilitado
+                .padding(horizontal = 40.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -84,7 +90,7 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
                     .background(BlueLight)
             )
 
-            Spacer(modifier = Modifier.height(88.dp))
+            Spacer(modifier = Modifier.height(32.dp)) // ⬅️ Ajustado
 
             CustomTextField(
                 label = "Correo electrónico",
@@ -124,7 +130,7 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
                 )
             }
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(32.dp)) // ⬅️ Ajustado
 
             RegisterButtonComponent(
                 onRegisterClick = {
@@ -148,15 +154,15 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
                 }
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(16.dp)) // Espacio final
         }
 
-        // ⬇ Spinner flotante si está cargando
         if (isLoading) {
             LogoSpinner()
         }
     }
 }
+
 
 
 

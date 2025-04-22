@@ -1,6 +1,8 @@
 package com.example.ptdapp.ui.screens.mainScreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -110,7 +112,14 @@ fun MainScreen(
                                 selectedItem = item.route
                             }, // Guardar la ruta al seleccionar
                             icon = {
-                                Box(contentAlignment = Alignment.Center) {
+                                Box(contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        ) {
+                                            selectedItem = item.route
+                                        }) {
                                     if (selectedItem == item.route) {
                                         Box(
                                             modifier = Modifier
@@ -141,42 +150,44 @@ fun MainScreen(
                             },
                             colors = NavigationBarItemDefaults.colors(
                                 indicatorColor = Color.Transparent // Se mantiene transparente ya que manejamos el indicador manualmente
-                            )
+                            ),
                         )
                     }
                 }
             }
         },
         floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally, // Centra el icono y el texto
-                modifier = Modifier.padding(10.dp)
-            ) {
-                IconButton(
-                    onClick = { navController.navigate(Destinations.CREATE_PTD_SCREEN) },
-                    modifier = Modifier
-                        .size(60.dp) // Ajusta el tamaño del icono
-                        .background(Color.Transparent) // Fondo totalmente transparente
+            if (selectedItem == BottomNavItem.Home.route) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(10.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.add_circle),
-                        contentDescription = "Añadir",
-                        modifier = Modifier.size(60.dp), // Ajusta al tamaño necesario
-                        tint = BlueLight
+                    IconButton(
+                        onClick = { navController.navigate(Destinations.CREATE_PTD_SCREEN) },
+                        modifier = Modifier
+                            .size(60.dp)
+                            .background(Color.Transparent)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.add_circle),
+                            contentDescription = "Añadir",
+                            modifier = Modifier.size(60.dp),
+                            tint = BlueLight
+                        )
+                    }
+
+                    Text(
+                        text = "Crear PTD",
+                        style = TextStyle(
+                            fontFamily = OpenSansSemiCondensed,
+                            fontSize = 11.sp,
+                            color = BlueLight
+                        )
                     )
                 }
-
-
-                Text(
-                    text = "Crear PTD",
-                    style = TextStyle(
-                        fontFamily = OpenSansSemiCondensed,
-                        fontSize = 11.sp,
-                        color = BlueLight
-                    )
-                )
             }
         }
+
 
     ) { innerPadding ->
         Box(
