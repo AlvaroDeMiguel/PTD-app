@@ -2,6 +2,7 @@ package com.example.ptdapp.ui.screens.profileScreen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -53,18 +54,19 @@ fun ProfileScreen(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
                 modifier = Modifier
-                    .clickable(onClick = { navController.popBackStack() })
-                    .padding(top = 25.dp, start = 10.dp)
                     .fillMaxWidth()
+                    .clickable(onClick = { navController.popBackStack() })
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_back_ios),
-                    contentDescription = "Cancelar",
+                    contentDescription = "Atras",
                     modifier = Modifier.size(24.dp),
                     tint = BlueLight
                 )
             }
+
 
             Spacer(modifier = Modifier.height(8.dp))
 

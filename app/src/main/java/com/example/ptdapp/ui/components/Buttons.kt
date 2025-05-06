@@ -61,19 +61,20 @@ fun RegisterButtonComponent(onRegisterClick: () -> Unit) {
 }
 
 @Composable
-fun CreatePTDButtonComponent(onCreateClick: () -> Unit) {
+fun CreatePTDButtonComponent(
+    buttonText: String,
+    onCreateClick: () -> Unit
+) {
     Button(
-        onClick = {
-            onCreateClick()
-        },
+        onClick = onCreateClick,
         colors = ButtonDefaults.buttonColors(containerColor = BlueLight),
-        shape = RoundedCornerShape(10.dp), // Bordes redondeados
+        shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp) // Altura del botón
+            .height(50.dp)
     ) {
         Text(
-            text = "Añadir",
+            text = buttonText,
             fontSize = 19.sp,
             style = TextStyle(
                 fontFamily = OpenSansSemiCondensed,
@@ -84,20 +85,26 @@ fun CreatePTDButtonComponent(onCreateClick: () -> Unit) {
     }
 }
 
+
 @Composable
-fun CreateGastoButtonComponent(onCreateClick: () -> Unit) {
+fun CreateGastoButtonComponent(
+    buttonText: String,
+    enabled: Boolean = true,
+    onCreateClick: () -> Unit
+) {
     Button(
-        onClick = {
-            onCreateClick()
-        },
-        colors = ButtonDefaults.buttonColors(containerColor = BlueLight),
-        shape = RoundedCornerShape(10.dp), // Bordes redondeados
+        onClick = onCreateClick,
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (enabled) BlueLight else Color.Gray
+        ),
+        shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp) // Altura del botón
+            .height(50.dp)
     ) {
         Text(
-            text = "Añadir",
+            text = buttonText,
             fontSize = 19.sp,
             style = TextStyle(
                 fontFamily = OpenSansSemiCondensed,
@@ -107,6 +114,7 @@ fun CreateGastoButtonComponent(onCreateClick: () -> Unit) {
         )
     }
 }
+
 
 @Composable
 fun IngresarButtonComponent(onIngresarClick: () -> Unit) {

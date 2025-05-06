@@ -22,6 +22,9 @@ import com.example.ptdapp.ui.screens.walletScreen.WalletScreen
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
 import com.example.ptdapp.ui.screens.walletScreen.WalletViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 
 @Composable
 fun NavGraph(navController: NavHostController,walletViewModel: WalletViewModel) {
@@ -37,14 +40,30 @@ fun NavGraph(navController: NavHostController,walletViewModel: WalletViewModel) 
         composable(Destinations.LOGIN_SCREEN) { LoginScreen(navController, authViewModel) }
         composable(Destinations.REGISTER_SCREEN) { RegisterScreen(navController, authViewModel) }
         composable(Destinations.MAIN_SCREEN) { MainScreen(navController, walletViewModel) }
-        composable(Destinations.CREATE_GASTO_SCREEN) { CreateGastoScreen(navController) }
+        composable(
+            route = Destinations.CREATE_GASTO_SCREEN,
+            arguments = listOf(navArgument("grupoId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val grupoId = backStackEntry.arguments?.getString("grupoId") ?: return@composable
+            CreateGastoScreen(navController = navController, grupoId = grupoId)
+        }
+
         composable(Destinations.CREATE_PTD_SCREEN) { CreatePTDScreen(navController) }
         composable(Destinations.DETAIL_GASTO_SCREEN) { DetailGastoScreen(navController) }
-        composable(Destinations.DETAIL_PTD_SCREEN) { DetailPTDScreen(navController) }
         composable(Destinations.HOME_SCREEN) { HomeScreen(navController) }
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
         composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) }
         composable(Destinations.WALLET_SCREEN) { WalletScreen(navController, walletViewModel) }
+        composable(
+            route = Destinations.DETAIL_PTD_SCREEN,
+            arguments = listOf(navArgument("ptdId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val grupoId = backStackEntry.arguments?.getString("ptdId") ?: return@composable
+            DetailPTDScreen(navController = navController, grupoId = grupoId)
+        }
+
+
+
 
 
     }

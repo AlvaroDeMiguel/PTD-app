@@ -18,7 +18,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.ptdapp.R
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 
 
@@ -316,16 +318,22 @@ fun CustomTextFieldIcon(
                         }
                     }
                 }
-            }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.None),
+            keyboardActions = KeyboardActions(onAny = {}),
+            singleLine = true
         )
     }
 }
+
+
 
 
 @Composable
 fun CustomTextFieldFixedIcon(
     label: String,
     placeholder: String,
+    onTextChanged: (String) -> Unit
 ) {
     var textState by remember { mutableStateOf(TextFieldValue("")) }
 
@@ -336,11 +344,15 @@ fun CustomTextFieldFixedIcon(
                 fontSize = 25.sp,
                 fontFamily = Dongle,
                 color = Color.Black
-            ),
+            )
         )
+
         TextField(
             value = textState,
-            onValueChange = { textState = it },
+            onValueChange = {
+                textState = it
+                onTextChanged(it.text)
+            },
             colors = textFieldColors(),
             placeholder = {
                 Text(
@@ -366,10 +378,18 @@ fun CustomTextFieldFixedIcon(
                     modifier = Modifier.size(28.dp),
                     tint = Color.Black
                 )
-            }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.None
+            ),
+            keyboardActions = KeyboardActions(onAny = {}),
+            singleLine = true
         )
     }
 }
+
+
 
 @Composable
 fun ProfileTextFieldStyled(

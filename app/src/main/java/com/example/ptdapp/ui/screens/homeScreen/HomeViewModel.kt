@@ -1,4 +1,4 @@
-package com.example.ptdapp.ui.screens.homeScreen
+package com.example.ptdapp.ui.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,8 +15,13 @@ class HomeViewModel : ViewModel() {
     var gruposUsuario = mutableStateOf<List<PTDGroup>>(emptyList())
         private set
 
+    var isLoading = mutableStateOf(true) // 👈 Añadido para mostrar el spinner
+        private set
+
     fun cargarGruposDelUsuario() {
         val currentUserId = auth.currentUser?.uid ?: return
+
+        isLoading.value = true
 
         firestore.collection("grupos")
             .whereArrayContains("miembros", currentUserId)
@@ -24,11 +29,11 @@ class HomeViewModel : ViewModel() {
             .addOnSuccessListener { result ->
                 val grupos = result.documents.mapNotNull { it.toObject(PTDGroup::class.java) }
                 gruposUsuario.value = grupos
+                isLoading.value = false
             }
             .addOnFailureListener { e ->
-                // Manejo de errores si lo deseas
                 e.printStackTrace()
+                isLoading.value = false
             }
     }
 }
-

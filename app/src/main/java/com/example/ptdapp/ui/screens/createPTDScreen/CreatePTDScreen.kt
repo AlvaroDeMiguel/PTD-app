@@ -1,6 +1,7 @@
 package com.example.ptdapp.ui.screens.createPTDScreen
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -26,12 +27,18 @@ import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExposedDropdownMenuDefaults.textFieldColors
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ptdapp.ui.components.CustomBigTextField
+import com.example.ptdapp.ui.components.CustomTextField
 import com.example.ptdapp.ui.components.SelectPersonCard
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
@@ -44,6 +51,7 @@ fun CreatePTDScreen(
     var descripcionGrupo by remember { mutableStateOf("") }
     val personas = listOf("Persona 1", "Persona 2", "Persona 3")
     var adminSeleccionado by remember { mutableStateOf(personas.first()) }
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -101,13 +109,16 @@ fun CreatePTDScreen(
             CustomBigTextField(
                 label = "Descripción",
                 placeholder = "Añadir descripción aquí",
-                onTextChanged = { descripcionGrupo = it } // Implementa este callback en tu componente
+                onTextChanged = {
+                    descripcionGrupo = it
+                } // Implementa este callback en tu componente
             )
 
 
             Spacer(modifier = Modifier.height(70.dp))
 
             CreatePTDButtonComponent(
+                buttonText = "Añadir",
                 onCreateClick = {
                     viewModel.crearPTD(
                         nombre = nombreGrupo,
@@ -122,11 +133,72 @@ fun CreatePTDScreen(
                     )
                 }
             )
-
-
-
+            Spacer(modifier = Modifier.height(32.dp))
+            var codigoGrupo by remember { mutableStateOf("") }
+            val firestore = FirebaseFirestore.getInstance()
+            val auth = FirebaseAuth.getInstance()
 
             Spacer(modifier = Modifier.height(32.dp))
+
+
+
+            CustomTextField(
+                label = "¿Tienes un código de grupo?",
+                value = codigoGrupo,
+                onValueChange = { codigoGrupo = it },
+                placeholder = "Pega el codigo aqui",
+                modifier = Modifier.fillMaxWidth(),
+
+                )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CreatePTDButtonComponent(
+                buttonText = "Unirse al grupo",
+                onCreateClick = {
+                    val uid = auth.currentUser?.uid ?: return@CreatePTDButtonComponent
+
+                    firestore.collection("grupos").document(codigoGrupo)
+                        .get()
+                        .addOnSuccessListener { doc ->
+                            if (doc.exists()) {
+                                val miembros =
+                                    doc.get("miembros") as? MutableList<String> ?: mutableListOf()
+                                if (!miembros.contains(uid)) {
+                                    miembros.add(uid)
+                                    firestore.collection("grupos").document(codigoGrupo)
+                                        .update("miembros", miembros)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(
+                                                context,
+                                                "Te has unido al grupo",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        .addOnFailureListener {
+                                            Toast.makeText(
+                                                context,
+                                                "Error al unirse",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Ya eres miembro del grupo",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(context, "El grupo no existe", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Error al buscar el grupo", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                })
         }
     }
 }

@@ -175,7 +175,6 @@ fun MainScreen(
                             tint = BlueLight
                         )
                     }
-
                     Text(
                         text = "Crear PTD",
                         style = TextStyle(

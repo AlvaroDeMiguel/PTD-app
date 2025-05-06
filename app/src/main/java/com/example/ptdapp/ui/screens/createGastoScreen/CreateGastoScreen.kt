@@ -1,5 +1,6 @@
 package com.example.ptdapp.ui.screens.createGastoScreen
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,38 +27,68 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ptdapp.data.model.PTDGroup
 import com.example.ptdapp.ui.components.CreateGastoButtonComponent
 import com.example.ptdapp.ui.components.SelectPersonCard
+import com.example.ptdapp.data.repositories.UserRepository
+import com.example.ptdapp.ui.components.CustomBigTextField
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 @Composable
-fun CreateGastoScreen(navController: NavHostController) {
+fun CreateGastoScreen(
+    navController: NavHostController,
+    grupoId: String
+) {
+    val db = Firebase.firestore
+    val context = LocalContext.current
     var selectedIcon by remember { mutableStateOf(R.drawable.image) }
+    val viewModel: GastoViewModel = viewModel()
 
-    val personas = listOf(
-        "Persona 1", "Persona 2", "Persona 3",
-        "Persona 4", "Persona 5", "Persona 6", "Persona 7"
-    )
 
-    var checkedStates by remember { mutableStateOf(personas.associateWith { true }) }
+    var titulo by remember { mutableStateOf("") }
+    var precio by remember { mutableStateOf("") }
+
+    var miembros by remember { mutableStateOf<List<String>>(emptyList()) }
+    var nombreUsuarios by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    var checkedStates by remember { mutableStateOf<Map<String, Boolean>>(emptyMap()) }
+    var pagadoPor by remember { mutableStateOf<String?>(null) }
+    var descripcion by remember { mutableStateOf("") }
+
+
+    LaunchedEffect(grupoId) {
+        db.collection("grupos").document(grupoId).get()
+            .addOnSuccessListener { doc ->
+                val grupo = doc.toObject(PTDGroup::class.java)
+                grupo?.let {
+                    miembros = it.miembros
+                    checkedStates = it.miembros.associateWith { true }
+                    pagadoPor = null
+
+                    UserRepository.getUserNamesByUids(it.miembros) { nombres ->
+                        nombreUsuarios = nombres
+                    }
+                }
+            }
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .imePadding() // 👈 evita que el teclado tape campos o botón
+            .imePadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // 👈 hace todo scrollable
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 40.dp, vertical = 20.dp)
                 .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.Start
         ) {
-            // ⬅️ Botón cancelar ahora funciona y está dentro del scroll
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable { navController.popBackStack() }
+                modifier = Modifier.clickable { navController.popBackStack() }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_back_ios),
@@ -84,22 +116,35 @@ fun CreateGastoScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            /**
-             *
-
             CustomTextFieldIcon(
                 label = "Título",
                 placeholder = "Añadir título aquí",
                 selectedIcon = selectedIcon,
-                onIconSelected = { newIcon -> selectedIcon = newIcon }
+                onIconSelected = { selectedIcon = it },
+                onTextChanged = { titulo = it }
             )
-             */
+            val iconoNombre = when (selectedIcon) {
+                R.drawable.image -> "image"
+                R.drawable.restaurant -> "restaurant"
+                R.drawable.credit_card -> "credit_card"
+                else -> "image"
+            }
+
+            CustomBigTextField(
+                label = "Descripción",
+                placeholder = "Añadir descripción aquí",
+                onTextChanged = {
+                    descripcion = it
+                } // Implementa este callback en tu componente
+            )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
             CustomTextFieldFixedIcon(
                 label = "Precio",
-                placeholder = "0 , 00"
+                placeholder = "0,00",
+                onTextChanged = { precio = it }
             )
 
             Spacer(modifier = Modifier.height(25.dp))
@@ -108,25 +153,25 @@ fun CreateGastoScreen(navController: NavHostController) {
                 text = "A dividir entre",
                 fontSize = 25.sp,
                 fontFamily = Dongle,
-                color = Color.Black,
+                color = Color.Black
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 👇 LazyColumn limitada en altura (dentro del scroll general)
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 100.dp, max = 300.dp), // altura flexible
+                    .heightIn(min = 100.dp, max = 300.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(personas) { persona ->
+                items(miembros) { uid ->
+                    val nombreVisible = nombreUsuarios[uid] ?: uid
                     CheckboxCard(
-                        persona = persona,
-                        checked = checkedStates[persona] ?: true,
+                        persona = nombreVisible,
+                        checked = checkedStates[uid] ?: true,
                         onCheckedChange = { isChecked ->
                             checkedStates = checkedStates.toMutableMap().apply {
-                                put(persona, isChecked)
+                                put(uid, isChecked)
                             }
                         }
                     )
@@ -139,18 +184,48 @@ fun CreateGastoScreen(navController: NavHostController) {
                 text = "Pagado por",
                 fontSize = 25.sp,
                 fontFamily = Dongle,
-                color = Color.Black,
+                color = Color.Black
             )
 
-            SelectPersonCard(personas)
+            SelectPersonCard(
+                personas = nombreUsuarios,
+                onSelected = { pagadoPor = it }
+            )
 
             Spacer(modifier = Modifier.height(70.dp))
 
-            CreateGastoButtonComponent(onCreateClick = {
-                // TODO: Acción al presionar el botón
-            })
+            val participantes = checkedStates.filterValues { it }.keys.toList()
+            val cantidadDouble = precio.replace(",", ".").toDoubleOrNull()
+            val isFormValid = titulo.isNotBlank() &&
+                    cantidadDouble != null && cantidadDouble > 0.0 &&
+                    participantes.isNotEmpty() &&
+                    !pagadoPor.isNullOrBlank()
 
-            Spacer(modifier = Modifier.height(32.dp)) // 👈 aire final para evitar recortes
+
+            CreateGastoButtonComponent(
+                buttonText = "Crear gasto",
+                enabled = isFormValid
+            ) {
+                // Guardar gasto (ya validado por isFormValid)
+                viewModel.guardarGasto(
+                    grupoId = grupoId,
+                    titulo = titulo,
+                    cantidad = cantidadDouble ?: 0.0,
+                    pagadoPor = pagadoPor!!,
+                    divididoEntre = participantes,
+                    iconoNombre = iconoNombre,
+                    descripcion = descripcion,
+                    onSuccess = {
+                        Toast.makeText(context, "Gasto creado", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    },
+                    onFailure = {
+                        Toast.makeText(context, "Error al guardar", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

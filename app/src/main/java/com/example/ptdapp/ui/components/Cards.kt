@@ -100,64 +100,67 @@ fun CustomCardGasto(
     fecha: String,
     nombreGasto: String,
     precioGasto: String,
+    iconoNombre: String
 ) {
-    Column() {
-        // Texto que indica la fecha
+    val context = LocalContext.current
+    val iconResId = remember(iconoNombre) {
+        context.resources.getIdentifier(iconoNombre, "drawable", context.packageName)
+    }
+
+    Column {
         Text(
             text = fecha,
+            modifier = Modifier.padding(start = 8.dp),
             style = TextStyle(
                 fontSize = 16.sp,
                 fontFamily = OpenSauce,
                 color = Color.Black
-            ),
+            )
         )
         Card(
             shape = RoundedCornerShape(19.dp),
-            colors = CardDefaults.cardColors(containerColor = CardColor), // Color de fondo
+            colors = CardDefaults.cardColors(containerColor = CardColor),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*TODO navegar a la vista de detalle de gasto */ }
+                .clickable { /* TODO: Navegar al detalle del gasto */ }
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start // Alinea los elementos a la izquierda
+                horizontalArrangement = Arrangement.Start
             ) {
-                // Ícono a la izquierda
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.add_photo),
-                    contentDescription = "Ícono personalizado",
+                    painter = painterResource(id = iconResId),
+                    contentDescription = "Ícono del gasto",
                     modifier = Modifier.size(43.dp),
                     tint = IconColor
                 )
 
-                // Espaciado entre el ícono y el texto
                 Spacer(modifier = Modifier.width(25.dp))
 
-                // Texto más cerca del icono
                 Text(
                     text = nombreGasto,
                     fontSize = 21.sp,
                     fontFamily = OpenSansSemiCondensed,
-                    color = Color.Black,
-                    textAlign = TextAlign.Start
+                    color = Color.Black
                 )
 
-                Spacer(modifier = Modifier.weight(1f)) // Empuja el icono de la derecha
+                Spacer(modifier = Modifier.weight(1f))
 
-                // texto del precio
                 Text(
                     fontSize = 24.sp,
                     text = "$precioGasto €",
                     fontFamily = OpenSauce,
-                    color = Color.Black,
+                    color = Color.Black
                 )
             }
         }
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -235,54 +238,63 @@ fun CheckboxCard(
 
 
 @Composable
-fun SelectPersonCard(personas: List<String>) {
-    // ✅ Estado para recordar la persona seleccionada
-    var selectedPerson by remember { mutableStateOf(personas.firstOrNull() ?: "Seleccionar persona") }
-    var expanded by remember { mutableStateOf(false) } // Estado para el menú desplegable
+fun SelectPersonCard(
+    personas: Map<String, String>, // uid -> nombre
+    onSelected: (String) -> Unit
+) {
+    val firstUid = personas.keys.firstOrNull()
+    var selectedUid by remember { mutableStateOf(firstUid ?: "") }
+    var expanded by remember { mutableStateOf(false) }
 
-    Card(
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = CardColor),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { expanded = true } // Abre el menú al hacer clic
-    ) {
-        Row(
+    val selectedName = personas[selectedUid] ?: "Seleccionar persona"
+
+    Box {
+        Card(
+            shape = RoundedCornerShape(10.dp),
+            colors = CardDefaults.cardColors(containerColor = CardColor),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .clickable { expanded = true }
         ) {
-            Text(
-                text = selectedPerson,
-                fontSize = 15.sp,
-                fontFamily = OpenSansNormal,
-                color = Color.Black,
-            )
-            Icon(
-                painter = painterResource(id = android.R.drawable.arrow_down_float),
-                contentDescription = "Abrir selección",
-                tint = Color.Black
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = selectedName,
+                    fontSize = 15.sp,
+                    fontFamily = OpenSansNormal,
+                    color = Color.Black
+                )
+                Icon(
+                    painter = painterResource(id = android.R.drawable.arrow_down_float),
+                    contentDescription = "Abrir selección",
+                    tint = Color.Black
+                )
+            }
         }
-    }
 
-    // ✅ DropdownMenu con la lista de personas
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        personas.forEach { persona ->
-            DropdownMenuItem(
-                text = { Text(persona) },
-                onClick = {
-                    selectedPerson = persona // ✅ Guarda la selección
-                    expanded = false
-                }
-            )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            personas.forEach { (uid, nombre) ->
+                DropdownMenuItem(
+                    text = { Text(nombre) },
+                    onClick = {
+                        selectedUid = uid
+                        expanded = false
+                        onSelected(uid)
+                    }
+                )
+            }
         }
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

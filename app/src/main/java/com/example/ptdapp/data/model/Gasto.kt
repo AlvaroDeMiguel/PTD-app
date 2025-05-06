@@ -7,8 +7,10 @@ data class Gasto(
     val id: String = "",
     val titulo: String = "",
     val cantidad: Double = 0.0,
-    val pagadoPor: String = "", // UID del usuario que pagó
-    val divididoEntre: List<String> = emptyList(), // UIDs de usuarios involucrados
+    val pagadoPor: String = "",
+    val divididoEntre: List<String> = emptyList(),
+    val iconoNombre: String = "",
+    val descripcion: String = "",
     @ServerTimestamp
     val fecha: Date? = null
 )
