@@ -1,5 +1,6 @@
 package com.example.ptdapp.ui.screens.createPTDScreen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -26,30 +27,35 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ptdapp.ui.components.CustomBigTextField
 import com.example.ptdapp.ui.components.SelectPersonCard
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 
 @Composable
 fun CreatePTDScreen(
     navController: NavHostController,
+    viewModel: CreatePTDViewModel = viewModel()
 ) {
     var selectedIcon by remember { mutableStateOf(R.drawable.image) }
-    val personas = listOf("Persona 1", "Persona 2", "Persona 3", "Persona 4", "Persona 5", "Persona 6", "Persona 7")
-    var checkedStates by remember { mutableStateOf(personas.associateWith { true }) }
+    var nombreGrupo by remember { mutableStateOf("") }
+    var descripcionGrupo by remember { mutableStateOf("") }
+    val personas = listOf("Persona 1", "Persona 2", "Persona 3")
+    var adminSeleccionado by remember { mutableStateOf(personas.first()) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .imePadding() // 👈 importante
+            .imePadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 40.dp, vertical = 20.dp) // 👈 padding correcto
+                .padding(horizontal = 40.dp, vertical = 20.dp)
         ) {
-            // ⬅️ Botón cancelar DENTRO del scrollable
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -86,43 +92,41 @@ fun CreatePTDScreen(
                 label = "Nombre",
                 placeholder = "Añadir nombre aquí",
                 selectedIcon = selectedIcon,
-                onIconSelected = { newIcon -> selectedIcon = newIcon }
+                onIconSelected = { newIcon -> selectedIcon = newIcon },
+                onTextChanged = { nombreGrupo = it } // Implementa este callback en tu componente
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             CustomBigTextField(
                 label = "Descripción",
-                placeholder = "Añadir descripción aquí"
+                placeholder = "Añadir descripción aquí",
+                onTextChanged = { descripcionGrupo = it } // Implementa este callback en tu componente
             )
 
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Text(
-                text = "Miembros",
-                fontSize = 25.sp,
-                fontFamily = Dongle,
-                color = Color.Black,
-            )
-
-            Spacer(modifier = Modifier.height(35.dp))
-
-            Text(
-                text = "Administrador",
-                fontSize = 25.sp,
-                fontFamily = Dongle,
-                color = Color.Black,
-            )
-
-            SelectPersonCard(personas)
 
             Spacer(modifier = Modifier.height(70.dp))
 
-            CreatePTDButtonComponent(onCreateClick = {
-                // TODO: Acción al presionar el botón
-            })
+            CreatePTDButtonComponent(
+                onCreateClick = {
+                    viewModel.crearPTD(
+                        nombre = nombreGrupo,
+                        descripcion = descripcionGrupo,
+                        iconoId = selectedIcon, // 👈 se pasa como Int y el ViewModel lo transforma a String
+                        onSuccess = {
+                            navController.popBackStack()
+                        },
+                        onFailure = { error ->
+                            Log.e("CreatePTD", "Error al crear grupo: ${error.message}")
+                        }
+                    )
+                }
+            )
 
-            Spacer(modifier = Modifier.height(32.dp)) // 👈 margen final extra
+
+
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

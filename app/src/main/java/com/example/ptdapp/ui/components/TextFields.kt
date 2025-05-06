@@ -130,10 +130,11 @@ fun NumericTextField(
 fun CustomBigTextField(
     label: String,
     placeholder: String,
+    onTextChanged: (String) -> Unit // 👈 Nuevo parámetro
 ) {
     var textState by remember { mutableStateOf(TextFieldValue("")) }
 
-    Column() {
+    Column {
         Text(
             text = label,
             style = TextStyle(
@@ -144,7 +145,10 @@ fun CustomBigTextField(
         )
         TextField(
             value = textState,
-            onValueChange = { textState = it },
+            onValueChange = {
+                textState = it
+                onTextChanged(it.text) // 👈 Callback para notificar cambios
+            },
             colors = textFieldColors(),
             placeholder = {
                 Text(
@@ -168,6 +172,7 @@ fun CustomBigTextField(
         )
     }
 }
+
 
 
 @Composable
@@ -235,11 +240,12 @@ fun CustomTextFieldPassword(
 fun CustomTextFieldIcon(
     label: String,
     placeholder: String,
-    selectedIcon: Int, // Ícono seleccionado como recurso drawable
-    onIconSelected: (Int) -> Unit // Callback al seleccionar un ícono
+    selectedIcon: Int,
+    onIconSelected: (Int) -> Unit,
+    onTextChanged: (String) -> Unit
 ) {
     var textState by remember { mutableStateOf(TextFieldValue("")) }
-    var expanded by remember { mutableStateOf(false) } // Estado del menú
+    var expanded by remember { mutableStateOf(false) }
 
     val iconOptions = listOf(
         R.drawable.image, R.drawable.restaurant, R.drawable.credit_card
@@ -256,7 +262,10 @@ fun CustomTextFieldIcon(
         )
         TextField(
             value = textState,
-            onValueChange = { textState = it },
+            onValueChange = {
+                textState = it
+                onTextChanged(it.text)
+            },
             colors = textFieldColors(),
             placeholder = {
                 Text(
@@ -282,10 +291,9 @@ fun CustomTextFieldIcon(
                         contentDescription = "Seleccionar icono",
                         modifier = Modifier
                             .size(28.dp)
-                            .clickable { expanded = true } // Hace el icono clickeable
+                            .clickable { expanded = true }
                     )
 
-                    // Menú desplegable de iconos
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
@@ -294,7 +302,7 @@ fun CustomTextFieldIcon(
                             DropdownMenuItem(
                                 text = { Text("") },
                                 onClick = {
-                                    onIconSelected(icon) // Cambia el ícono seleccionado
+                                    onIconSelected(icon)
                                     expanded = false
                                 },
                                 leadingIcon = {
@@ -312,6 +320,7 @@ fun CustomTextFieldIcon(
         )
     }
 }
+
 
 @Composable
 fun CustomTextFieldFixedIcon(
@@ -421,27 +430,9 @@ private fun textFieldColors() = TextFieldDefaults.colors(
     unfocusedIndicatorColor = Color.Transparent,
     disabledIndicatorColor = Color.Transparent,
 
-    // 🔥 Añade estas dos líneas:
     disabledContainerColor = LightBlue,
     disabledTextColor = Color.Black
 )
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCustomTextField() {
-
-    PTDAppTheme {
-        var selectedIcon by remember { mutableStateOf(R.drawable.image) }
-
-        CustomTextFieldIcon(
-            label = "Categoría",
-            placeholder = "Selecciona una categoría",
-            selectedIcon = selectedIcon,
-            onIconSelected = { newIcon -> selectedIcon = newIcon }
-        )
-    }
-}
 
 
 

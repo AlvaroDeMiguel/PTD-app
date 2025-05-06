@@ -84,12 +84,16 @@ fun CreateGastoScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
+            /**
+             *
+
             CustomTextFieldIcon(
                 label = "Título",
                 placeholder = "Añadir título aquí",
                 selectedIcon = selectedIcon,
                 onIconSelected = { newIcon -> selectedIcon = newIcon }
             )
+             */
 
             Spacer(modifier = Modifier.height(16.dp))
 

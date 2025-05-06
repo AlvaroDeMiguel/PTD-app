@@ -6,7 +6,7 @@ data class PerfilUsuario(
     val nombre: String = "",
     val pais: String = "",
     val ciudad: String = "",
-    val wallet: WalletData = WalletData() // <-- Nuevo
+    val wallet: WalletData = WalletData()
 )
 
 data class WalletData(

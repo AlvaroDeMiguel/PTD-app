@@ -24,6 +24,7 @@ import com.example.ptdapp.R
 import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 import com.example.ptdapp.ui.theme.OpenSauce
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.example.ptdapp.data.model.Notification
 import com.example.ptdapp.ui.theme.OpenSansNormal
@@ -36,34 +37,41 @@ val CardColor = Color(0xFFA7D8F5)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomCardInicio(
-    text: String
+    text: String,
+    iconoNombre: String,
+    onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    // Convertir el nombre del drawable en ID de recurso
+    val iconResId = remember(iconoNombre) {
+        context.resources.getIdentifier(iconoNombre, "drawable", context.packageName)
+    }
+
     Card(
         shape = RoundedCornerShape(19.dp),
-        colors = CardDefaults.cardColors(containerColor = CardColor), // Color de fondo
+        colors = CardDefaults.cardColors(containerColor = CardColor),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /*TODO navegar a la vista de detalle de ptd */ }
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start // Alinea los elementos a la izquierda
+            horizontalArrangement = Arrangement.Start
         ) {
-            // Ícono a la izquierda
+            // Ícono a la izquierda (convertido desde el nombre)
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.add_photo),
-                contentDescription = "Ícono personalizado",
+                painter = painterResource(id = iconResId),
+                contentDescription = "Ícono del grupo",
                 modifier = Modifier.size(43.dp),
                 tint = IconColor
             )
 
-            // Espaciado entre el ícono y el texto
             Spacer(modifier = Modifier.width(25.dp))
 
-            // Texto más cerca del icono
             Text(
                 text = text,
                 fontSize = 21.sp,
@@ -72,9 +80,8 @@ fun CustomCardInicio(
                 textAlign = TextAlign.Start
             )
 
-            Spacer(modifier = Modifier.weight(1f)) // Empuja el icono de la derecha
+            Spacer(modifier = Modifier.weight(1f))
 
-            // Texto a la derecha
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.chevron_right),
                 contentDescription = "Flecha derecha",
@@ -84,6 +91,8 @@ fun CustomCardInicio(
         }
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
