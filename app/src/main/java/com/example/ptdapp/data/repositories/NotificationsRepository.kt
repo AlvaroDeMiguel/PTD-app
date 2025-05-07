@@ -74,4 +74,33 @@ class NotificationsRepository {
         firestore.collection("users").document(userId).collection("notifications").document(id)
             .delete().await()
     }
+
+    suspend fun notificarIngresoAGrupo(grupoNombre: String, miembros: List<String>) {
+        val actualUserId = auth.currentUser?.uid ?: return
+
+        // 🔹 Obtener el nombre del usuario actual
+        val userDoc = firestore.collection("users").document(actualUserId).get().await()
+        val nombreUsuario = userDoc.getString("nombre") ?: "Alguien"
+
+        val notificacion = mapOf(
+            "title" to "Nuevo miembro en el grupo",
+            "description" to "$nombreUsuario se ha unido al grupo \"$grupoNombre\".",
+            "timestamp" to FieldValue.serverTimestamp(),
+            "read" to false
+        )
+
+        miembros
+            .filter { it != actualUserId }
+            .forEach { uid ->
+                firestore.collection("users")
+                    .document(uid)
+                    .collection("notifications")
+                    .add(notificacion)
+                    .await()
+            }
+    }
+
+
 }
+
+

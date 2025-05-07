@@ -32,10 +32,9 @@ import com.google.firebase.ktx.Firebase
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
-import androidx.compose.material.icons.Icons
+import com.example.ptdapp.ui.screens.detailPTDScreen.gastos.GastosContent
+import com.example.ptdapp.ui.screens.detailPTDScreen.saldos.SaldosContent
 
 
 @Composable
@@ -202,8 +201,9 @@ fun DetailPTDScreen(
 
                 when (selectedTab) {
                     "Gastos" -> GastosContent(grupoId)
-                    "Saldos" -> MiembrosContent(nombresVisibles)
+                    "Saldos" -> SaldosContent(grupoId = grupoId, miembros = grupo!!.miembros)
                 }
+
 
 
 

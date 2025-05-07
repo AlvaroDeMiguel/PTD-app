@@ -11,34 +11,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ptdapp.R
-import com.example.ptdapp.ui.components.CheckboxCard
 import com.example.ptdapp.ui.components.CreatePTDButtonComponent
-import com.example.ptdapp.ui.components.CustomTextFieldFixedIcon
 import com.example.ptdapp.ui.components.CustomTextFieldIcon
 import com.example.ptdapp.ui.theme.BlueLight
-import com.example.ptdapp.ui.theme.Dongle
 import com.example.ptdapp.ui.theme.OpenSansNormal
 import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExposedDropdownMenuDefaults.textFieldColors
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ptdapp.data.repositories.NotificationsRepository
 import com.example.ptdapp.ui.components.CustomBigTextField
 import com.example.ptdapp.ui.components.CustomTextField
-import com.example.ptdapp.ui.components.SelectPersonCard
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -52,6 +45,7 @@ fun CreatePTDScreen(
     val personas = listOf("Persona 1", "Persona 2", "Persona 3")
     var adminSeleccionado by remember { mutableStateOf(personas.first()) }
     val context = LocalContext.current
+    val notificationsRepo = NotificationsRepository()
 
     Box(
         modifier = Modifier
@@ -153,6 +147,10 @@ fun CreatePTDScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+
+
+            val notificationsRepo = NotificationsRepository()
+
             CreatePTDButtonComponent(
                 buttonText = "Unirse al grupo",
                 onCreateClick = {
@@ -162,10 +160,12 @@ fun CreatePTDScreen(
                         .get()
                         .addOnSuccessListener { doc ->
                             if (doc.exists()) {
-                                val miembros =
-                                    doc.get("miembros") as? MutableList<String> ?: mutableListOf()
+                                val miembros = doc.get("miembros") as? MutableList<String> ?: mutableListOf()
+                                val nombreGrupo = doc.getString("nombre") ?: "un grupo"
+
                                 if (!miembros.contains(uid)) {
                                     miembros.add(uid)
+
                                     firestore.collection("grupos").document(codigoGrupo)
                                         .update("miembros", miembros)
                                         .addOnSuccessListener {
@@ -174,6 +174,17 @@ fun CreatePTDScreen(
                                                 "Te has unido al grupo",
                                                 Toast.LENGTH_SHORT
                                             ).show()
+
+                                            // Enviar notificación al resto de miembros
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                notificationsRepo.notificarIngresoAGrupo(
+                                                    grupoNombre = nombreGrupo,
+                                                    miembros = miembros
+                                                )
+                                            }
+
+                                            // Volver atrás después de unirse
+                                            navController.popBackStack()
                                         }
                                         .addOnFailureListener {
                                             Toast.makeText(
@@ -190,15 +201,22 @@ fun CreatePTDScreen(
                                     ).show()
                                 }
                             } else {
-                                Toast.makeText(context, "El grupo no existe", Toast.LENGTH_SHORT)
-                                    .show()
+                                Toast.makeText(
+                                    context,
+                                    "El grupo no existe",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                         .addOnFailureListener {
-                            Toast.makeText(context, "Error al buscar el grupo", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                context,
+                                "Error al buscar el grupo",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                })
+                }
+            )
         }
     }
 }

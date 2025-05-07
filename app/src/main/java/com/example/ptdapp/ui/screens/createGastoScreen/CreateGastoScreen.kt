@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -119,7 +118,7 @@ fun CreateGastoScreen(
             CustomTextFieldIcon(
                 label = "Título",
                 placeholder = "Añadir título aquí",
-                selectedIcon = selectedIcon,
+                selectedIcon,
                 onIconSelected = { selectedIcon = it },
                 onTextChanged = { titulo = it }
             )
@@ -135,7 +134,7 @@ fun CreateGastoScreen(
                 placeholder = "Añadir descripción aquí",
                 onTextChanged = {
                     descripcion = it
-                } // Implementa este callback en tu componente
+                }
             )
 
 
@@ -208,13 +207,13 @@ fun CreateGastoScreen(
             ) {
                 // Guardar gasto (ya validado por isFormValid)
                 viewModel.guardarGasto(
-                    grupoId = grupoId,
-                    titulo = titulo,
+                    grupoId,
+                    titulo,
                     cantidad = cantidadDouble ?: 0.0,
-                    pagadoPor = pagadoPor!!,
+                    pagadoPor!!,
                     divididoEntre = participantes,
-                    iconoNombre = iconoNombre,
-                    descripcion = descripcion,
+                    iconoNombre,
+                    descripcion,
                     onSuccess = {
                         Toast.makeText(context, "Gasto creado", Toast.LENGTH_SHORT).show()
                         navController.popBackStack()

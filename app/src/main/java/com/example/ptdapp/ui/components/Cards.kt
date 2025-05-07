@@ -27,6 +27,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.example.ptdapp.data.model.Notification
+import com.example.ptdapp.ui.theme.Green
 import com.example.ptdapp.ui.theme.OpenSansNormal
 import kotlinx.coroutines.delay
 
@@ -142,7 +143,7 @@ fun CustomCardGasto(
 
                 Text(
                     text = nombreGasto,
-                    fontSize = 21.sp,
+                    fontSize = 24.sp,
                     fontFamily = OpenSansSemiCondensed,
                     color = Color.Black
                 )
@@ -150,7 +151,7 @@ fun CustomCardGasto(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    fontSize = 24.sp,
+                    fontSize = 21.sp,
                     text = "$precioGasto €",
                     fontFamily = OpenSauce,
                     color = Color.Black
@@ -201,6 +202,52 @@ fun CustomCardSaldo(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomCardSaldoPersonal(
+    gastoPersona: String,
+) {
+    // Convertir a número para evaluar el color
+    val cantidad = gastoPersona.replace(",", ".").toDoubleOrNull() ?: 0.0
+
+    val colorTexto = when {
+        cantidad > 0 -> Green
+        cantidad < 0 -> Color.Red
+        else -> Color.Black // Neutro
+    }
+
+    Card(
+        shape = RoundedCornerShape(19.dp),
+        colors = CardDefaults.cardColors(containerColor = CardColor),
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp, vertical = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = "Te deben:",
+                fontSize = 30.sp,
+                fontFamily = OpenSansSemiCondensed,
+                color = Color.Black,
+                textAlign = TextAlign.Start,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                fontSize = 25.sp,
+                text = "$gastoPersona €",
+                fontFamily = OpenSauce,
+                color = colorTexto
+            )
+        }
+    }
+}
+
 
 
 
