@@ -219,7 +219,7 @@ fun DetailPTDScreen(
                 Spacer(Modifier.height(16.dp))
 
                 when (selectedTab) {
-                    "Gastos" -> GastosContent(grupoId)
+                    "Gastos" -> GastosContent(grupoId, navController)
                     "Saldos" -> SaldosContent(grupoId = grupoId, miembros = g.miembros)
                 }
             }

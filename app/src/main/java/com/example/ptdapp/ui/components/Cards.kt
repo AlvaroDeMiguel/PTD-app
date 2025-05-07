@@ -101,7 +101,8 @@ fun CustomCardGasto(
     fecha: String,
     nombreGasto: String,
     precioGasto: String,
-    iconoNombre: String
+    iconoNombre: String,
+    onClick: () -> Unit // 👉 Nuevo parámetro
 ) {
     val context = LocalContext.current
     val iconResId = remember(iconoNombre) {
@@ -123,7 +124,7 @@ fun CustomCardGasto(
             colors = CardDefaults.cardColors(containerColor = CardColor),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /* TODO: Navegar al detalle del gasto */ }
+                .clickable { onClick() } // 👈 Ejecuta la acción pasada
         ) {
             Row(
                 modifier = Modifier
@@ -160,6 +161,7 @@ fun CustomCardGasto(
         }
     }
 }
+
 
 
 

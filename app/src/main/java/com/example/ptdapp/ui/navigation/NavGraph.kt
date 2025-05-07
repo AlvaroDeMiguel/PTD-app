@@ -49,7 +49,18 @@ fun NavGraph(navController: NavHostController,walletViewModel: WalletViewModel) 
         }
 
         composable(Destinations.CREATE_PTD_SCREEN) { CreatePTDScreen(navController) }
-        composable(Destinations.DETAIL_GASTO_SCREEN) { DetailGastoScreen(navController) }
+        composable(
+            route = Destinations.DETAIL_GASTO_SCREEN,
+            arguments = listOf(
+                navArgument("grupoId") { type = NavType.StringType },
+                navArgument("gastoId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val grupoId = backStackEntry.arguments?.getString("grupoId") ?: return@composable
+            val gastoId = backStackEntry.arguments?.getString("gastoId") ?: return@composable
+            DetailGastoScreen(grupoId = grupoId, gastoId = gastoId, navController = navController)
+        }
+
         composable(Destinations.HOME_SCREEN) { HomeScreen(navController) }
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
         composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) }

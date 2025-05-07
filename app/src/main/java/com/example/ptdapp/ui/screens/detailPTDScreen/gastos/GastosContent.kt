@@ -20,6 +20,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.ptdapp.ui.navigation.Destinations
 import com.example.ptdapp.ui.theme.Gray
 import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 
@@ -27,6 +29,7 @@ import com.example.ptdapp.ui.theme.OpenSansSemiCondensed
 @Composable
 fun GastosContent(
     grupoId: String,
+    navController: NavHostController,
     gastosViewModel: GastosViewModel = viewModel()
 ) {
     val gastos by gastosViewModel.gastos.collectAsState()
@@ -69,7 +72,10 @@ fun GastosContent(
                     fecha = formattedDate,
                     nombreGasto = gasto.titulo,
                     precioGasto = String.format("%.2f", gasto.cantidad),
-                    iconoNombre = gasto.iconoNombre
+                    iconoNombre = gasto.iconoNombre,
+                    onClick = {
+                        navController.navigate(Destinations.detailGastoRoute(grupoId, gasto.id))
+                    }
                 )
             }
         }
