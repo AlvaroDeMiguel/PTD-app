@@ -99,6 +99,30 @@ class NotificationsRepository {
                     .await()
             }
     }
+    suspend fun notificarLiquidacionDeudas(grupoNombre: String, miembros: List<String>) {
+        val actualUserId = auth.currentUser?.uid ?: return
+
+        val userDoc = firestore.collection("users").document(actualUserId).get().await()
+        val nombreUsuario = userDoc.getString("nombre") ?: "El administrador"
+
+        val notificacion = mapOf(
+            "title" to "Grupo liquidado",
+            "description" to "$nombreUsuario ha saldado todas las deudas en el grupo \"$grupoNombre\".",
+            "timestamp" to FieldValue.serverTimestamp(),
+            "read" to false
+        )
+
+        miembros
+            .filter { it != actualUserId }
+            .forEach { uid ->
+                firestore.collection("users")
+                    .document(uid)
+                    .collection("notifications")
+                    .add(notificacion)
+                    .await()
+            }
+    }
+
 
 
 }

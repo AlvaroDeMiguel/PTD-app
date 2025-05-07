@@ -73,7 +73,7 @@ class WalletRepository(
                 }
             }.await()
 
-            registrarTransaccion(userId, amount)
+            registrarTransaccion(userId, amount, "GooglePay")
             notificationsRepository.crearNotificacionIngreso(amount)
             true
         } catch (e: Exception) {
@@ -84,10 +84,10 @@ class WalletRepository(
 
 
     // 📝 Registrar transacción dentro del usuario (subcolección)
-    private suspend fun registrarTransaccion(userId: String, amount: Double) {
+    suspend fun registrarTransaccion(userId: String, amount: Double, method: String) {
         val transaccion = mapOf(
             "amount" to amount,
-            "method" to "GooglePay",
+            "method" to method,
             "timestamp" to FieldValue.serverTimestamp()
         )
 
@@ -98,31 +98,7 @@ class WalletRepository(
             .await()
     }
 
-    // 🧾 Obtener historial de transacciones en tiempo real (Opcional pero recomendado)
-    fun getTransaccionesFlow(): Flow<List<Map<String, Any>>> = callbackFlow {
-        val userId = auth.currentUser?.uid ?: run {
-            close()
-            return@callbackFlow
-        }
 
-        val transaccionesRef = firestore.collection("users")
-            .document(userId)
-            .collection("transactions")
-            .orderBy("timestamp")
-
-        val listener = transaccionesRef.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                Log.e("WalletRepository", "Error escuchando transacciones", error)
-                trySend(emptyList())
-                return@addSnapshotListener
-            }
-
-            val transacciones = snapshot?.documents?.mapNotNull { it.data } ?: emptyList()
-            trySend(transacciones)
-        }
-
-        awaitClose { listener.remove() }
-    }
 
     fun obtenerSaldoDeUsuario(userId: String, callback: (Double?) -> Unit) {
         firestore.collection("users").document(userId).get()
@@ -142,6 +118,4 @@ class WalletRepository(
                 callback(null)
             }
     }
-
-
 }

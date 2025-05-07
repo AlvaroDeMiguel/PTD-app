@@ -33,8 +33,13 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ptdapp.ui.liquidacionViewModel.LiquidacionEstado
+import com.example.ptdapp.ui.liquidacionViewModel.LiquidacionViewModel
 import com.example.ptdapp.ui.screens.detailPTDScreen.gastos.GastosContent
 import com.example.ptdapp.ui.screens.detailPTDScreen.saldos.SaldosContent
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -46,15 +51,18 @@ fun DetailPTDScreen(
     var grupo by remember { mutableStateOf<PTDGroup?>(null) }
     var selectedTab by remember { mutableStateOf("Gastos") }
     var nombreUsuarios by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
 
+    val liquidacionViewModel: LiquidacionViewModel = viewModel()
+    val estadoLiquidacion by liquidacionViewModel.estadoLiquidacion.collectAsState()
+
+    var showLiquidarDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(grupoId) {
         Firebase.firestore.collection("grupos").document(grupoId)
             .get()
             .addOnSuccessListener { doc ->
                 grupo = doc.toObject(PTDGroup::class.java)?.also { g ->
-
-                    // ✅ Cargar nombres reales con el UserRepository
                     UserRepository.getUserNamesByUids(g.miembros) { nombresMap ->
                         nombreUsuarios = nombresMap
                     }
@@ -62,13 +70,27 @@ fun DetailPTDScreen(
             }
     }
 
+    LaunchedEffect(estadoLiquidacion) {
+        when (estadoLiquidacion) {
+            LiquidacionEstado.Success -> {
+                Toast.makeText(context, "Deudas liquidadas correctamente", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+                liquidacionViewModel.resetEstado()
+            }
+
+            is LiquidacionEstado.Error -> {
+                Toast.makeText(context, (estadoLiquidacion as LiquidacionEstado.Error).mensaje, Toast.LENGTH_SHORT).show()
+                liquidacionViewModel.resetEstado()
+            }
+
+            else -> {}
+        }
+    }
 
     grupo?.let { g ->
         val iconResId = remember(g.iconoNombre) {
             context.resources.getIdentifier(g.iconoNombre, "drawable", context.packageName)
         }
-        val nombresVisibles = g.miembros.map { uid -> nombreUsuarios[uid] ?: uid }
-
 
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -76,22 +98,21 @@ fun DetailPTDScreen(
                     .fillMaxSize()
                     .padding(20.dp)
             ) {
-                // Botón de atrás
+                // Botón atrás
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { navController.popBackStack() }
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.arrow_back_ios),
+                        painterResource(R.drawable.arrow_back_ios),
                         contentDescription = "Cancelar",
                         modifier = Modifier.size(24.dp),
                         tint = BlueLight
                     )
                     Text(
-                        text = "Inicio",
+                        "Inicio",
                         style = TextStyle(
                             fontSize = 20.sp,
                             fontFamily = OpenSansNormal,
@@ -101,10 +122,10 @@ fun DetailPTDScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.height(12.dp))
 
                 Icon(
-                    painter = painterResource(id = iconResId),
+                    painterResource(iconResId),
                     contentDescription = "Icono grupo",
                     modifier = Modifier
                         .size(150.dp)
@@ -112,7 +133,7 @@ fun DetailPTDScreen(
                     tint = LightBlue
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.height(12.dp))
 
                 Text(
                     text = g.nombre,
@@ -125,8 +146,9 @@ fun DetailPTDScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.height(12.dp))
 
+                // Código del grupo
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
@@ -143,8 +165,8 @@ fun DetailPTDScreen(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    val clipboardManager = LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val context = LocalContext.current
+                    val clipboardManager =
+                        LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
                     IconButton(onClick = {
                         val clip = ClipData.newPlainText("Código del grupo", g.id)
@@ -152,17 +174,16 @@ fun DetailPTDScreen(
                         Toast.makeText(context, "Código copiado", Toast.LENGTH_SHORT).show()
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.content_copy), // Usa un ícono de copiar si lo tienes
+                            painterResource(R.drawable.content_copy),
                             contentDescription = "Copiar código",
                             tint = BlueLight
                         )
                     }
                 }
 
+                Spacer(Modifier.height(12.dp))
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-
+                // Selector de pestañas
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -195,18 +216,12 @@ fun DetailPTDScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                val nombresVisibles = grupo?.miembros?.map { uid -> nombreUsuarios[uid] ?: uid } ?: emptyList()
+                Spacer(Modifier.height(16.dp))
 
                 when (selectedTab) {
                     "Gastos" -> GastosContent(grupoId)
-                    "Saldos" -> SaldosContent(grupoId = grupoId, miembros = grupo!!.miembros)
+                    "Saldos" -> SaldosContent(grupoId = grupoId, miembros = g.miembros)
                 }
-
-
-
-
             }
 
             if (selectedTab == "Gastos") {
@@ -214,38 +229,77 @@ fun DetailPTDScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(end = 20.dp, bottom = 20.dp)
+                        .padding(20.dp)
                 ) {
                     IconButton(
                         onClick = { navController.navigate(Destinations.createGastoRoute(grupoId)) },
-                        modifier = Modifier
-                            .size(60.dp)
+                        modifier = Modifier.size(60.dp)
                             .background(Color.Transparent)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.add_circle),
+                            painterResource(R.drawable.add_circle),
                             contentDescription = "Añadir",
                             modifier = Modifier.size(60.dp),
                             tint = BlueLight
                         )
                     }
                     Text(
-                        text = "Crear gasto",
-                        style = TextStyle(
-                            fontFamily = OpenSansSemiCondensed,
-                            fontSize = 11.sp,
-                            color = BlueLight
+                        "Crear gasto",
+                        style = TextStyle(fontFamily = OpenSansSemiCondensed, fontSize = 13.sp, color = BlueLight)
+                    )
+                }
+            } else if (g.adminId == currentUserUid) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 20.dp, bottom = 20.dp)
+                ) {
+                    IconButton(
+                        onClick = { showLiquidarDialog = true },
+                        modifier = Modifier.size(60.dp)
+                            .background(Color.Transparent)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.shopping_cart_checkout),
+                            contentDescription = "Liquidar deudas",
+                            modifier = Modifier.size(60.dp),
+                            tint = BlueLight
                         )
+                    }
+                    Text(
+                        "Liquidar deudas",
+                        style = TextStyle(fontFamily = OpenSansSemiCondensed, fontSize = 13.sp, color = BlueLight)
                     )
                 }
             }
+
+            if (showLiquidarDialog) {
+                AlertDialog(
+                    onDismissRequest = { showLiquidarDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            liquidacionViewModel.liquidarGrupo(grupoId)
+                            showLiquidarDialog = false
+                        }) {
+                            Text("Confirmar", style = TextStyle(fontFamily = OpenSansSemiCondensed, fontSize = 18.sp, color = BlueLight))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showLiquidarDialog = false }) {
+                            Text("Cancelar", style = TextStyle(fontFamily = OpenSansSemiCondensed, fontSize = 18.sp, color = BlueLight))
+                        }
+                    },
+                    title = { Text("Alerta!", style = TextStyle(fontSize = 25.sp, color = Color.Red, fontFamily = OpenSansSemiCondensed)) },
+                    text = { Text("Si saldas las deudas de este grupo ya no se podrán editar posteriormente y se archivará.", textAlign = TextAlign.Justify, fontFamily = OpenSansSemiCondensed, fontSize = 18.sp) }
+                )
+            }
         }
-    } ?: run {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            LogoSpinner()
-        }
+    } ?: Box(Modifier.fillMaxSize(), Alignment.Center) {
+        LogoSpinner()
     }
 }
+
 
 
 

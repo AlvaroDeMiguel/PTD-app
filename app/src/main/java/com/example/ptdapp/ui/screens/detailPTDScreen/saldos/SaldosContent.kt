@@ -99,7 +99,7 @@ fun SaldosContent(
                     val saldo = saldos[uid] ?: 0.0
 
                     CustomCardSaldo(
-                        nombrePersona = nombre,
+                        nombre,
                         gastoPersona = String.format("%.2f", saldo)
                     )
                 }

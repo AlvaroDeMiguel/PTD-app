@@ -62,6 +62,12 @@ class NotificationsViewModel : ViewModel() {
             _hasUnread.value = false
         }
     }
+    fun notificarLiquidacionDeGrupo(grupoNombre: String, miembros: List<String>) {
+        viewModelScope.launch {
+            repository.notificarLiquidacionDeudas(grupoNombre, miembros)
+        }
+    }
+
 }
 
 
