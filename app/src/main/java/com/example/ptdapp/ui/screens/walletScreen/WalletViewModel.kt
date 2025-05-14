@@ -5,15 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ptdapp.data.repositories.WalletRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class WalletViewModel(
     private val walletRepository: WalletRepository = WalletRepository()
 ) : ViewModel() {
 
-    private val _saldo = MutableStateFlow<Double?>(null)
-    val saldo: StateFlow<Double?> = _saldo
+    /* flujo ÚNICO que observa la UI */
+    private val _saldo = MutableStateFlow<Double>(0.0)
+    val saldo: StateFlow<Double> = _saldo
 
     private val _recargaExitosa = MutableStateFlow<Boolean?>(null)
     val recargaExitosa: StateFlow<Boolean?> = _recargaExitosa
@@ -24,10 +28,11 @@ class WalletViewModel(
         observarSaldo()
     }
 
+    /** Suscribe getSaldoFlow al uid actual y alimenta _saldo */
     private fun observarSaldo() {
         viewModelScope.launch {
-            walletRepository.getSaldoFlow().collect {
-                _saldo.value = it
+            walletRepository.getSaldoFlow().collect { valor ->
+                valor?.let { _saldo.value = it }
             }
         }
     }
@@ -45,42 +50,44 @@ class WalletViewModel(
     }
 
 
+    /** Tras recarga forzamos lectura inmediata (ya actúa sobre _saldo) */
     private fun recargarSaldo(amount: Double) {
         viewModelScope.launch {
-            Log.d("WalletViewModel", "🔄 recargando saldo: $amount")
             val success = walletRepository.recargarSaldo(amount)
             _recargaExitosa.value = success
             if (success) {
-                Log.d("WalletViewModel", "✅ Recarga exitosa")
-
-                // FORZAR LECTURA MANUAL
                 walletRepository.obtenerSaldoActual { newBalance ->
-                    viewModelScope.launch {
-                        _saldo.value = newBalance
-                    }
+                    _saldo.value = newBalance ?: _saldo.value
                 }
-            } else {
-                Log.e("WalletViewModel", "❌ Error al recargar")
             }
         }
     }
-
 
 
     fun resetearRecarga() {
         _recargaExitosa.value = null
     }
 
+    /** Lectura manual (primer login o fallback) */
     fun loadUserBalance(userId: String) {
         viewModelScope.launch {
             walletRepository.obtenerSaldoDeUsuario(userId) { saldoRecuperado ->
-                saldoRecuperado?.let { saldo ->
-                    _saldo.value = saldo
-                    Log.d("WalletViewModel", "✅ Saldo inicial cargado: $saldo")
-                } ?: run {
-                    Log.e("WalletViewModel", "❌ Error al recuperar saldo inicial")
-                    _saldo.value = 0.0
-                }
+                _saldo.value = saldoRecuperado ?: 0.0
+            }
+        }
+    }
+
+
+    private val _saldoReal = MutableStateFlow(0.0)
+    val saldoReal: StateFlow<Double> = _saldoReal
+
+    // Inyecta también el SaldoViewModel o los Flows de deudas
+    fun setFlujosDeudas(flujoDebes: StateFlow<Double>, flujoTeDeben: StateFlow<Double>) {
+        viewModelScope.launch {
+            combine(saldo, flujoDebes, flujoTeDeben) { s, d, td ->
+                (s ?: 0.0) + td - d
+            }.collect { saldoCalculado ->
+                _saldoReal.value = saldoCalculado   // Nuevo StateFlow<Double>
             }
         }
     }

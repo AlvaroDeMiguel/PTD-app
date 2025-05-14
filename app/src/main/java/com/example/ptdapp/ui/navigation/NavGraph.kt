@@ -24,68 +24,95 @@ import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
 import com.example.ptdapp.ui.screens.walletScreen.WalletViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.ptdapp.ui.screens.detailPTDScreen.saldos.SaldoViewModel
 
 
 @Composable
-fun NavGraph(navController: NavHostController,walletViewModel: WalletViewModel) {
-    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory()) // ✅ Usa Factory
+fun NavGraph(
+    navController: NavHostController,
+    walletViewModel: WalletViewModel,
+    saldoViewModel:  SaldoViewModel
+) {
+    /* ----------  ViewModels raíz  ---------- */
+    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory())
+
+    /* ----------  Sincronizar flujos  ---------- */
+    LaunchedEffect(Unit) {
+        walletViewModel.setFlujosDeudas(
+            flujoDebes   = saldoViewModel.debes,
+            flujoTeDeben = saldoViewModel.teDeben
+        )
+    }
+    /* (cargarTotalesGlobales() ya no se llama; el VM se actualiza solo) */
+
+    /* ----------  Pantalla inicial  ---------- */
     val user by authViewModel.user.collectAsState()
+    val startDestination =
+        if (user != null) Destinations.MAIN_SCREEN else Destinations.LOGIN_SCREEN
 
-    val startDestination = if (user != null) Destinations.MAIN_SCREEN else Destinations.LOGIN_SCREEN
+    /* ----------  NavHost  ---------- */
+    NavHost(navController, startDestination) {
 
-    NavHost(
-        navController = navController,
-        startDestination = startDestination
-    ) {
-        composable(Destinations.LOGIN_SCREEN) { LoginScreen(navController, authViewModel) }
+        composable(Destinations.LOGIN_SCREEN)    { LoginScreen(navController, authViewModel) }
         composable(Destinations.REGISTER_SCREEN) { RegisterScreen(navController, authViewModel) }
-        composable(Destinations.MAIN_SCREEN) { MainScreen(navController, walletViewModel) }
+
+        composable(Destinations.MAIN_SCREEN) {
+            MainScreen(navController, walletViewModel, saldoViewModel)
+        }
+
         composable(
             route = Destinations.CREATE_GASTO_SCREEN,
             arguments = listOf(navArgument("grupoId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val grupoId = backStackEntry.arguments?.getString("grupoId") ?: return@composable
-            CreateGastoScreen(navController = navController, grupoId = grupoId)
+        ) { back ->
+            CreateGastoScreen(
+                navController,
+                back.arguments?.getString("grupoId") ?: return@composable
+            )
         }
 
         composable(Destinations.CREATE_PTD_SCREEN) { CreatePTDScreen(navController) }
+
         composable(
             route = Destinations.DETAIL_GASTO_SCREEN,
             arguments = listOf(
                 navArgument("grupoId") { type = NavType.StringType },
                 navArgument("gastoId") { type = NavType.StringType }
             )
-        ) { backStackEntry ->
-            val grupoId = backStackEntry.arguments?.getString("grupoId") ?: return@composable
-            val gastoId = backStackEntry.arguments?.getString("gastoId") ?: return@composable
-            DetailGastoScreen(grupoId = grupoId, gastoId = gastoId, navController = navController)
+        ) { back ->
+            DetailGastoScreen(
+                grupoId       = back.arguments?.getString("grupoId") ?: return@composable,
+                gastoId       = back.arguments?.getString("gastoId") ?: return@composable,
+                navController = navController
+            )
         }
 
-        composable(Destinations.HOME_SCREEN) { HomeScreen(navController) }
+        composable(Destinations.HOME_SCREEN)         { HomeScreen(navController) }
         composable(Destinations.NOTIFICATION_SCREEN) { NotificationScreen(navController) }
-        composable(Destinations.PROFILE_SCREEN) { ProfileScreen(navController, authViewModel) }
-        composable(Destinations.WALLET_SCREEN) { WalletScreen(navController, walletViewModel) }
+        composable(Destinations.PROFILE_SCREEN)      { ProfileScreen(navController, authViewModel) }
+
+        composable(Destinations.WALLET_SCREEN) {
+            WalletScreen(navController, walletViewModel, saldoViewModel)
+        }
+
         composable(
             route = Destinations.DETAIL_PTD_SCREEN,
             arguments = listOf(navArgument("ptdId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val grupoId = backStackEntry.arguments?.getString("ptdId") ?: return@composable
-            DetailPTDScreen(navController = navController, grupoId = grupoId)
+        ) { back ->
+            DetailPTDScreen(
+                navController = navController,
+                grupoId       = back.arguments?.getString("ptdId") ?: return@composable
+            )
         }
-
-
-
-
-
     }
 
-    // ✅ Redirige automáticamente a login si el usuario cierra sesión
+    /* ----------  Logout → limpia NavHost y VMs  ---------- */
     LaunchedEffect(user) {
         if (user == null) {
             navController.navigate(Destinations.LOGIN_SCREEN) {
-                popUpTo(Destinations.LOGIN_SCREEN) { inclusive = true } // ✅ Limpia la pila de navegación
+                popUpTo(0) { inclusive = true }   // borra pila + ViewModelStore
             }
         }
     }
 }
+
 

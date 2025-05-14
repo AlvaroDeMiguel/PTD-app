@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.ptdapp.R
 import com.example.ptdapp.ui.navigation.Destinations
+import com.example.ptdapp.ui.screens.detailPTDScreen.saldos.SaldoViewModel
 import com.example.ptdapp.ui.screens.homeScreen.HomeScreen
 import com.example.ptdapp.ui.screens.notificationScreen.NotificationScreen
 import com.example.ptdapp.ui.screens.notificationScreen.NotificationsViewModel
@@ -37,7 +38,8 @@ import com.example.ptdapp.ui.theme.SoftRed
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    walletViewModel: WalletViewModel
+    walletViewModel: WalletViewModel,
+    saldoViewModel:  SaldoViewModel
 ) {
     val items = listOf(BottomNavItem.Wallet, BottomNavItem.Home, BottomNavItem.Notifications)
     var selectedItem by remember { mutableStateOf(BottomNavItem.Home.route) } // Guardar la ruta en String
@@ -196,7 +198,11 @@ fun MainScreen(
                 .background(LightGray)
         ) {
             when (selectedItem) {
-                BottomNavItem.Wallet.route -> WalletScreen(navController, walletViewModel)
+                BottomNavItem.Wallet.route -> WalletScreen(
+                    navController,
+                    walletViewModel,
+                    saldoViewModel
+                )
                 BottomNavItem.Home.route -> HomeScreen(navController)
                 BottomNavItem.Notifications.route -> NotificationScreen(navController)
             }

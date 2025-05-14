@@ -14,6 +14,7 @@ import com.example.ptdapp.data.payment.PaymentRepository
 import com.example.ptdapp.ui.authViewmodel.AuthViewModel
 import com.example.ptdapp.ui.authViewmodel.AuthViewModelFactory
 import com.example.ptdapp.ui.navigation.NavGraph
+import com.example.ptdapp.ui.screens.detailPTDScreen.saldos.SaldoViewModel
 import com.example.ptdapp.ui.screens.walletScreen.WalletViewModel
 import com.example.ptdapp.ui.theme.PTDAppTheme
 import com.google.android.gms.wallet.AutoResolveHelper
@@ -27,30 +28,47 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            /* ───────── Root navigation ───────── */
             val navController = rememberNavController()
-            val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory())
-            val walletViewModel = viewModel<WalletViewModel>()
 
+            /* ViewModels en el Store de la Activity */
+            val authViewModel:  AuthViewModel  = viewModel(factory = AuthViewModelFactory())
+            val walletViewModel: WalletViewModel = viewModel()
+            val saldoViewModel:  SaldoViewModel  = viewModel()
+
+            /* ───────── Sincronizar flujos de deudas (una sola vez) ───────── */
+            LaunchedEffect(Unit) {
+                walletViewModel.setFlujosDeudas(
+                    flujoDebes   = saldoViewModel.debes,
+                    flujoTeDeben = saldoViewModel.teDeben
+                )
+            }
+
+            /* ───────── Cuando cambia el usuario, carga saldo disponible ───────── */
             val userState = authViewModel.user.collectAsState()
-
             LaunchedEffect(userState.value?.uid) {
-                userState.value?.let { user ->
-                    walletViewModel.loadUserBalance(user.uid)
+                userState.value?.uid?.let { uid ->
+                    walletViewModel.loadUserBalance(uid)
                 }
             }
 
+            /* ───────── Callback de Google Pay ───────── */
             onGooglePayResult = { success ->
-                if (success) {
-                    walletViewModel.confirmarPagoExitoso()
-                }
+                if (success) walletViewModel.confirmarPagoExitoso()
             }
 
+            /* ───────── UI Theme + NavGraph ───────── */
             PTDAppTheme {
-                NavGraph(navController, walletViewModel = walletViewModel)
+                NavGraph(
+                    navController   = navController,
+                    walletViewModel = walletViewModel,
+                    saldoViewModel  = saldoViewModel
+                )
             }
         }
     }
 
+    /* ---------- Resultado de Google Pay ---------- */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -76,3 +94,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+

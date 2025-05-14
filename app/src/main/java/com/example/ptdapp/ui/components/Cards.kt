@@ -210,20 +210,20 @@ fun CustomCardSaldo(
 fun CustomCardSaldoPersonal(
     gastoPersona: String,
 ) {
-    // Convertir a número para evaluar el color
     val cantidad = gastoPersona.replace(",", ".").toDoubleOrNull() ?: 0.0
 
     val colorTexto = when {
         cantidad > 0 -> Green
         cantidad < 0 -> Color.Red
-        else -> Color.Black // Neutro
+        else -> Color.Black
     }
+
+    val textoEtiqueta = if (cantidad < 0) "Debes:" else "Te deben:"
 
     Card(
         shape = RoundedCornerShape(19.dp),
         colors = CardDefaults.cardColors(containerColor = CardColor),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
@@ -233,7 +233,7 @@ fun CustomCardSaldoPersonal(
             horizontalArrangement = Arrangement.Start
         ) {
             Text(
-                text = "Te deben:",
+                text = textoEtiqueta,
                 fontSize = 30.sp,
                 fontFamily = OpenSansSemiCondensed,
                 color = Color.Black,
@@ -249,6 +249,7 @@ fun CustomCardSaldoPersonal(
         }
     }
 }
+
 
 
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.example.ptdapp.data.payment.PaymentRepository
 import com.example.ptdapp.ui.components.IngresarButtonComponent
 import com.example.ptdapp.ui.components.NumericTextField
+import com.example.ptdapp.ui.screens.detailPTDScreen.saldos.SaldoViewModel
 import com.example.ptdapp.ui.theme.BlueLight
 import com.example.ptdapp.ui.theme.Gray
 import com.example.ptdapp.ui.theme.Green
@@ -33,7 +34,8 @@ import com.example.ptdapp.ui.theme.OpenSauce
 @Composable
 fun WalletScreen(
     navController: NavHostController,
-    walletViewModel: WalletViewModel
+    walletViewModel: WalletViewModel,
+    saldoViewModel: SaldoViewModel
 ) {
     var customAmount by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -44,6 +46,11 @@ fun WalletScreen(
     val saldo by walletViewModel.saldo.collectAsState()
 
     val scrollState = rememberScrollState()
+
+    val debes    by saldoViewModel.debes.collectAsState()
+    val teDeben  by saldoViewModel.teDeben.collectAsState()
+    val saldoReal by walletViewModel.saldoReal.collectAsState()
+
 
     Column(
         modifier = Modifier
@@ -87,7 +94,7 @@ fun WalletScreen(
             }
         }
 
-        // 👇 DEJADO TAL CUAL pediste ✅
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -122,7 +129,7 @@ fun WalletScreen(
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
-                            text = "- 0,00 €",
+                            text = "- ${formatPrice1(debes)}",
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontFamily = OpenSauce,
@@ -159,7 +166,7 @@ fun WalletScreen(
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
-                            text = "+ 0,00 €",
+                            text = "+ ${formatPrice1(teDeben)}",
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontFamily = OpenSauce,
@@ -194,7 +201,7 @@ fun WalletScreen(
                     }
                     Column {
                         Text(
-                            text = "0,00 €",
+                            text = formatPrice1(saldoReal),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontFamily = OpenSauce,
