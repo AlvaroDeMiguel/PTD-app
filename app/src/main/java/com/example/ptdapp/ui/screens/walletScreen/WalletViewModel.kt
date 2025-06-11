@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ptdapp.data.repositories.WalletRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -24,9 +26,19 @@ class WalletViewModel(
 
     private var _pendingAmount: Double? = null
 
-    init {
-        observarSaldo()
+    private var refreshJob: Job? = null
+
+    fun refreshWallet() {
+        refreshJob?.cancel()                 // evita duplicados
+        refreshJob = viewModelScope.launch {
+            walletRepository.getSaldoFlow()
+                .collectLatest { _saldo.value = it ?: 0.0 }
+        }
     }
+
+    //init {
+      //  observarSaldo()
+    //}
 
     /** Suscribe getSaldoFlow al uid actual y alimenta _saldo */
     private fun observarSaldo() {

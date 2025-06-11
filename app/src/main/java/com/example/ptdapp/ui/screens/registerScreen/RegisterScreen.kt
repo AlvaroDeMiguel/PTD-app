@@ -119,6 +119,8 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            /**
+             *
             errorMessage?.let {
                 Text(
                     text = it,
@@ -129,6 +131,7 @@ fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel = 
                     )
                 )
             }
+             */
 
             Spacer(modifier = Modifier.height(32.dp)) // ⬅️ Ajustado
 

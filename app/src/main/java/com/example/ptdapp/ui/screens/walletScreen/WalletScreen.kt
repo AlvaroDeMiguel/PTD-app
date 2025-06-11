@@ -20,6 +20,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.ptdapp.data.payment.PaymentRepository
 import com.example.ptdapp.ui.components.IngresarButtonComponent
 import com.example.ptdapp.ui.components.NumericTextField
@@ -50,6 +53,17 @@ fun WalletScreen(
     val debes    by saldoViewModel.debes.collectAsState()
     val teDeben  by saldoViewModel.teDeben.collectAsState()
     val saldoReal by walletViewModel.saldoReal.collectAsState()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                walletViewModel.refreshWallet()   // fuerza (re)lectura
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
 
     Column(
